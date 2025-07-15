@@ -17,22 +17,29 @@ const Footer = () => (
           <Typography fontSize={15}>Email: <a href="mailto:topmobileshopservice@gmail.com" style={{color:'#ff8000'}}>topmobileshopservice@gmail.com</a></Typography>
         </Grid>
         {/* Menu */}
-        <Grid item xs={12} sm={4} md={3}>
-          <Typography fontWeight={600} mb={1} color="#50577a">Meny</Typography>
-          <Stack spacing={1}>
-            <a href="/products" style={{ color: "#50577a", textDecoration: "none" }}>Produktet</a>
-            <a href="/cart" style={{ color: "#50577a", textDecoration: "none" }}>Shporta</a>
-            <a href="/contact" style={{ color: "#50577a", textDecoration: "none" }}>Na Kontakto</a>
-            <a href="/about" style={{ color: "#50577a", textDecoration: "none" }}>Rreth Nesh</a>
-          </Stack>
-        </Grid>
+       <Grid item xs={12} sm={4} md={3}>
+  <Typography fontWeight={600} mb={1} color="#50577a">Meny</Typography>
+  <Stack spacing={1}>
+    <a href="/products" style={{ color: "#50577a", textDecoration: "none" }}>Produktet</a>
+    <a href="/cart" style={{ color: "#50577a", textDecoration: "none" }}>Shporta</a>
+    <a
+      href="https://wa.me/38345407222"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color: "#50577a", textDecoration: "none" }}
+    >
+      Na Kontakto
+    </a>
+  </Stack>
+</Grid>
+
         {/* Social & Pagesat */}
         <Grid item xs={12} sm={4} md={4}>
           <Typography fontWeight={600} mb={1} color="#50577a">Na ndiqni</Typography>
           <Stack direction="row" spacing={2} mb={2}>
-            <IconButton href="https://facebook.com" target="_blank" sx={{ color: "#4267B2" }}><FaFacebook /></IconButton>
+            <IconButton href="https://www.facebook.com/topmobile.rks" target="_blank" sx={{ color: "#4267B2" }}><FaFacebook /></IconButton>
             <IconButton href="https://www.instagram.com/topmobile.rks/" target="_blank" sx={{ color: "#C13584" }}><FaInstagram /></IconButton>
-            <IconButton href="https://tiktok.com" target="_blank" sx={{ color: "#000" }}><FaTiktok /></IconButton>
+            <IconButton href="https://www.tiktok.com/@topmobile.rks" target="_blank" sx={{ color: "#000" }}><FaTiktok /></IconButton>
             <IconButton href="https://wa.me/38344723123" target="_blank" sx={{ color: "#25D366" }}><FaWhatsapp /></IconButton>
           </Stack>
           <Divider sx={{ mb: 1 }} />

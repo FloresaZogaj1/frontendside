@@ -568,3 +568,115 @@
   user-select: none;
   line-height: 1.1;
 }
+/* --- KATEGORITË responsive & me scroll horizontal për mobile --- */
+.category-list {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;      /* Kategoritë në rresht, jo në dy rreshta */
+  margin-bottom: 18px;
+  margin-top: 5px;
+  overflow-x: auto;      /* Scroll horizontal në mobile */
+  scrollbar-width: none; /* Fsheh scroll bar në Firefox */
+}
+.category-list::-webkit-scrollbar {
+  display: none;         /* Fsheh scroll bar në Chrome/Safari */
+}
+
+.category-blur-card {
+  min-width: 74px;
+  min-height: 70px;
+  max-width: 120px;
+  padding: 10px 5px 6px 5px;
+  border-radius: 15px;
+  border: 1.3px solid #ff800020;
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 2px 10px #ff80001a;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.13s, border 0.11s, transform 0.11s, background 0.11s;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.category-blur-card.selected,
+.category-blur-card:hover {
+  border: none;
+  background: rgba(255, 128, 0, 0.14);
+  box-shadow: 0 5px 18px #ff80002c;
+  transform: scale(1.042) translateY(-1.5px);
+}
+/* Efekt shtesë për tap në mobile */
+.category-blur-card:active {
+  background: rgba(255, 128, 0, 0.25);
+  transform: scale(0.98);
+}
+
+.cat-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.22);
+  margin-bottom: 5px;
+  margin-top: 0px;
+  box-shadow: 0 2px 8px #ff800023;
+}
+.cat-label {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #252e40;
+  letter-spacing: 0.01em;
+  text-align: center;
+  margin-top: 0px;
+  user-select: none;
+  line-height: 1.1;
+}
+
+/* --- Responsiviteti --- */
+@media (max-width: 600px) {
+  .category-list {
+    gap: 7px;
+    justify-content: center;
+    margin-bottom: 14px;
+    margin-top: 3px;
+  }
+  .category-blur-card {
+    min-width: 54px;
+    min-height: 52px;
+    max-width: 90px;
+    padding: 6px 2px 4px 2px;
+    border-radius: 10px;
+  }
+  .cat-icon-wrap {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    margin-bottom: 2px;
+  }
+  .cat-label {
+    font-size: 0.84rem;
+    margin-top: 0px;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 400px) {
+  .category-list {
+    gap: 5px;
+  }
+  .category-blur-card {
+    min-width: 46px;
+    max-width: 70px;
+    padding: 3px 1px 2px 1px;
+    border-radius: 8px;
+  }
+  .cat-label {
+    font-size: 0.76rem;
+  }
+}
