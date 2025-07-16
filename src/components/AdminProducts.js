@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 
-const API_URL = "http://localhost:4000"; // ose përdor process.env.REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -17,53 +17,49 @@ function AdminProducts() {
   const [deleteId, setDeleteId] = useState(null);
   const token = localStorage.getItem("token");
 
-  // Rifresko të dhënat
   const refresh = () => {
     fetch(`${API_URL}/api/admin/products`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     })
       .then(res => res.json())
       .then(setProducts);
   };
 
-  // Merr produktet
   useEffect(() => {
     refresh();
   }, [token]);
 
-  // Shto produkt
   const handleAdd = async (e) => {
-  e.preventDefault();
-  await fetch(`${API_URL}/api/admin/products`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      name: form.name,
-      price: parseFloat(form.price),  // Sigurohu që është numër!
-      category: form.category
-    })
-  });
-  setForm({ name: "", price: "", category: "" });
-  refresh();
-};
+    e.preventDefault();
+    await fetch(`${API_URL}/api/admin/products`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: form.name,
+        price: parseFloat(form.price),
+        category: form.category
+      }),
+      credentials: "include"
+    });
+    setForm({ name: "", price: "", category: "" });
+    refresh();
+  };
 
-
-  // Fshij produkt
   const handleDelete = async () => {
     await fetch(`${API_URL}/api/admin/products/${deleteId}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     });
     setDeleteId(null);
     refresh();
   };
 
-  // Nis editimin
   const startEdit = (product) => {
-    // Vetëm 3 fusha për update!
     setEditProduct({
       id: product.id,
       name: product.name,
@@ -72,7 +68,6 @@ function AdminProducts() {
     });
   };
 
-  // Ruaj ndryshimet
   const saveEdit = async () => {
     if (!editProduct) return;
     await fetch(`${API_URL}/api/admin/products/${editProduct.id}`, {
@@ -85,7 +80,8 @@ function AdminProducts() {
         name: editProduct.name,
         price: editProduct.price,
         category: editProduct.category,
-      })
+      }),
+      credentials: "include"
     });
     setEditProduct(null);
     refresh();
@@ -125,7 +121,6 @@ function AdminProducts() {
           SHTO
         </Button>
       </Paper>
-
       <Paper sx={{ borderRadius: 3, boxShadow: 2, p: 1 }}>
         <Table>
           <TableHead>
@@ -153,8 +148,6 @@ function AdminProducts() {
           </TableBody>
         </Table>
       </Paper>
-
-      {/* Modal për editim */}
       <Dialog open={!!editProduct} onClose={() => setEditProduct(null)}>
         <DialogTitle>Ndrysho Produktin</DialogTitle>
         <DialogContent>
@@ -186,8 +179,6 @@ function AdminProducts() {
           <Button startIcon={<SaveIcon />} onClick={saveEdit} sx={{ bgcolor: "#ff8000", color: "#fff", "&:hover": { bgcolor: "#e67200" } }}>Ruaj</Button>
         </DialogActions>
       </Dialog>
-
-      {/* Modal për fshirje */}
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
         <DialogTitle>Je i sigurt që do ta fshish këtë produkt?</DialogTitle>
         <DialogActions>

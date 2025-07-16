@@ -1,16 +1,17 @@
-// src/admin/components/AdminWelcome.js
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { useEffect, useState } from "react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 export default function AdminWelcome() {
-  // Merr statistika (sot për shembull)
   const [sales, setSales] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/admin/stats", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    fetch(`${API_URL}/api/admin/stats`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => setSales(data.sales_today ?? 0));

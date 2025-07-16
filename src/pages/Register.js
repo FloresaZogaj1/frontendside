@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Box, Button, TextField, Typography, Paper } from "@mui/material";
 import { AuthContext } from "../AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -15,10 +16,11 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+        credentials: "include"   // KJO ESHTE E RENDESISHME!
       });
       const data = await res.json();
       if (res.ok) {
@@ -35,13 +37,7 @@ function Register() {
   };
 
   return (
-    <Box
-      minHeight="100vh"
-      bgcolor="#f5f7fa"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
+    <Box minHeight="100vh" bgcolor="#f5f7fa" display="flex" alignItems="center" justifyContent="center">
       <Paper elevation={2} sx={{ p: 4, minWidth: 350, borderRadius: 4 }}>
         <Typography variant="h4" color="primary" mb={2} fontWeight={700}>
           <span style={{ color: "#FF7200" }}>topmobile</span>

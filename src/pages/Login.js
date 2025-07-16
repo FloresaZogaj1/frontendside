@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Box, Button, TextField, Typography, Paper } from "@mui/material";
 import { AuthContext } from "../AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -16,16 +17,16 @@ function Login() {
     e.preventDefault();
     setMessage(""); // fshi errorin e vjetër
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+        credentials: "include"     // KJO ESHTE E RENDESISHME!
       });
       const data = await res.json();
-      // KONTROLL: Kërko token DHE user nga backend!
       if (res.ok && data.token && data.user) {
-        login(data.token, data.user); // KJO është pika kyçe!
-        navigate("/profile"); // ose /admin nëse do ta dërgosh direkt atje
+        login(data.token, data.user);
+        navigate("/profile");
       } else {
         setMessage(data.message || "Gabim në login");
       }
@@ -35,13 +36,7 @@ function Login() {
   };
 
   return (
-    <Box
-      minHeight="100vh"
-      bgcolor="#f5f7fa"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
+    <Box minHeight="100vh" bgcolor="#f5f7fa" display="flex" alignItems="center" justifyContent="center">
       <Paper elevation={2} sx={{ p: 4, minWidth: 350, borderRadius: 4 }}>
         <Typography variant="h4" color="primary" mb={2} fontWeight={700}>
           <span style={{ color: "#FF7200" }}>topmobile</span>
@@ -55,15 +50,9 @@ function Login() {
           fullWidth
           variant="outlined"
           sx={{ mb: 1, textTransform: "none" }}
-          startIcon={
-            <img
-              src="https://img.icons8.com/color/48/000000/google-logo.png"
-              width="22"
-              alt="google"
-            />
-          }
+          startIcon={<img src="https://img.icons8.com/color/48/000000/google-logo.png" width="22" alt="google" />}
           onClick={() =>
-            window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`
+            window.location.href = `${API_URL}/api/auth/google`
           }
         >
           Identifikohu me Google
@@ -72,13 +61,7 @@ function Login() {
           fullWidth
           variant="outlined"
           sx={{ mb: 2, textTransform: "none" }}
-          startIcon={
-            <img
-              src="https://img.icons8.com/color/48/000000/facebook-new.png"
-              width="22"
-              alt="fb"
-            />
-          }
+          startIcon={<img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="22" alt="fb" />}
           disabled
         >
           Identifikohu me Facebook

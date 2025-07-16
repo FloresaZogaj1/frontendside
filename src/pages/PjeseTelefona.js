@@ -6,38 +6,36 @@ const phoneParts = [
   {
     title: 'Ekran iPhone X/11/12/13',
     image: 'https://img.freepik.com/free-vector/neon-home-screen-template-smartphone_23-2148736060.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Ekran origjinal dhe OLED për të gjitha modelet më të kërkuara.',
-    price: 49
+    desc: 'Ekran origjinal dhe OLED për të gjitha modelet më të kërkuara.'
   },
   {
     title: 'Bateri për Samsung & iPhone',
     image: 'https://img.freepik.com/free-photo/football-fan-accessories_23-2147827577.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Bateri me jetëgjatësi për performancë të lartë.',
-    price: 19
+    desc: 'Bateri me jetëgjatësi për performancë të lartë.'
   },
   {
     title: 'Kamera & Face ID Module',
     image: 'https://img.freepik.com/free-vector/security-cam-cctv-video-camera-street-observe-surveillance-equipment-front-side-angle-view_107791-2997.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Zëvendësim për kamera kryesore, selfie dhe module Face ID.',
-    price: 35
+    desc: 'Zëvendësim për kamera kryesore, selfie dhe module Face ID.'
+    
   },
   {
     title: 'Altoparlant & mikrofon',
     image: 'https://img.freepik.com/free-photo/close-up-hand-holding-microphone_23-2148681178.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Altoparlant dhe mikrofon me zë të pastër për të gjitha modelet.',
-    price: 12
+    desc: 'Altoparlant dhe mikrofon me zë të pastër për të gjitha modelet.'
+    
   },
   {
     title: 'Kabllo & Aksesorë',
     image: 'https://img.freepik.com/free-vector/mobile-phone-smartphone-charging-set-with-isolated-wires-plugs-power-banks-adapters-with-bolt-sign-vector-illustration_1284-79391.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Kabllo karikimi, adapterë, mbrojtëse ekrani dhe më shumë.',
-    price: 6
+    desc: 'Kabllo karikimi, adapterë, mbrojtëse ekrani dhe më shumë.'
+    
   },
   {
     title: 'Butona anësorë & home',
     image: 'https://img.freepik.com/free-vector/house-location-pin-red-black_78370-8743.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Butona anësorë, butoni home ose fingerprint për të gjitha modelet.',
-    price: 8
+    desc: 'Butona anësorë, butoni home ose fingerprint për të gjitha modelet.'
+    
   }
 ];
 

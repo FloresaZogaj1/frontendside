@@ -1,46 +1,48 @@
 import React, { useEffect, useState } from "react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function AdminUsers() {
   const [users, setUsers] = useState([]);
-  const [reload, setReload] = useState(false); // për të rifreskuar pas veprimeve
+  const [reload, setReload] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Merr user-at
   useEffect(() => {
-    fetch("http://localhost:4000/api/admin/users", {
-      headers: { Authorization: `Bearer ${token}` }
+    fetch(`${API_URL}/api/admin/users`, {
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => setUsers(data));
   }, [token, reload]);
 
-  // Fshij përdorues
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:4000/api/admin/users/${id}`, {
+    await fetch(`${API_URL}/api/admin/users/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     });
     setReload(r => !r);
   };
 
-  // Ndrysho rolin (user/admin)
   const handleRole = async (id, role) => {
-    await fetch(`http://localhost:4000/api/admin/users/${id}/role`, {
+    await fetch(`${API_URL}/api/admin/users/${id}/role`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ role })
+      body: JSON.stringify({ role }),
+      credentials: "include"
     });
     setReload(r => !r);
   };
 
-  // Blloko/zhblloko user
   const handleBlock = async (id) => {
-    await fetch(`http://localhost:4000/api/admin/users/${id}/block`, {
+    await fetch(`${API_URL}/api/admin/users/${id}/block`, {
       method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     });
     setReload(r => !r);
   };

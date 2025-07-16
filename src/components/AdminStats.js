@@ -37,17 +37,20 @@ const statCards = [
     icon: <PaidIcon sx={{ fontSize: 42, color: dark }} />,
     key: "totalSales",
     color: dark,
-    link: "/admin/orders" // ose ndonjë raport për shitje
+    link: "/admin/orders"
   }
 ];
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 function AdminStats() {
   const [stats, setStats] = useState({});
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/admin/stats", {
-      headers: { Authorization: `Bearer ${token}` }
+    fetch(`${API_URL}/api/admin/stats`, {
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => setStats(data));

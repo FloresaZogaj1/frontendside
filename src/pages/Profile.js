@@ -14,9 +14,9 @@ function Profile() {
       navigate("/login");
       return;
     }
-    // Fletch profile nga backend (nëse ke endpoint për këtë)
     fetch(`${API_URL}/api/protected`, {
       headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"   // KJO ESHTE E RENDESISHME!
     })
       .then((res) => res.json())
       .then(setData)

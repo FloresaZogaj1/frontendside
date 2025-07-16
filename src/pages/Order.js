@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,8 +14,9 @@ function Orders() {
       setLoading(false);
       return;
     }
-    fetch(`${process.env.REACT_APP_API_URL}/api/orders/user`, {
-      headers: { Authorization: `Bearer ${token}` }
+    fetch(`${API_URL}/api/orders/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include"   // KJO ESHTE E RENDESISHME!
     })
       .then(res => res.json())
       .then(data => {
