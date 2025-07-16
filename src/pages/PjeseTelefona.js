@@ -129,17 +129,7 @@ const PjeseTelefona = () => {
                   >
                     {item.desc}
                   </Typography>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      color: '#ff8000',
-                      fontWeight: 700,
-                      fontSize: 16,
-                      mt: 1
-                    }}
-                  >
-                    {item.price}€
-                  </Typography>
+                  
                 </CardContent>
                 <Box sx={{ width: '100%', px: 2, pb: 2 }}>
                   <Button
