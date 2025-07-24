@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+// 🟠 Ky është ndryshimi:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+
 const Auth = ({ setLoggedIn }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
@@ -9,7 +12,7 @@ const Auth = ({ setLoggedIn }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = isLogin ? "/api/login" : "/api/register";
+    const url = isLogin ? `${API_URL}/api/login` : `${API_URL}/api/register`;
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -63,7 +66,6 @@ const Auth = ({ setLoggedIn }) => {
           required
           style={{ width: "100%", marginBottom: 10, padding: 8 }}
         />
-        {/* Checkbox për njoftime me email (vetëm te regjistrimi) */}
         {!isLogin && (
           <div style={{ marginBottom: 12 }}>
             <label>

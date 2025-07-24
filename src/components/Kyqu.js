@@ -6,6 +6,9 @@ import logo from "../assets/PFP-01__5_-removebg-preview.png";
 import { useNavigate } from "react-router-dom";
 import { auth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "../firebase";
 
+// 🟠 Ky është ndryshimi:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+
 const Kyqu = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,15 +35,12 @@ const Kyqu = () => {
     setLoading(false);
   };
 
-  // Kyçja me Facebook
- 
-
   // Kyçja me email/password (login klasik)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: email, password }),
@@ -48,9 +48,7 @@ const Kyqu = () => {
       const data = await res.json();
   
       if (res.ok && data.token) {
-        // Ruaj token-in për përdorim të mëvonshëm
         localStorage.setItem("token", data.token);
-        // Ridrejto te ballina ose dashboard
         navigate("/");
       } else {
         alert(data.error || "Gabim gjatë kyçjes!");
@@ -60,7 +58,6 @@ const Kyqu = () => {
     }
     setLoading(false);
   };
-  
 
   return (
     <Box
@@ -111,8 +108,6 @@ const Kyqu = () => {
         >
           Identifikohu me Google
         </Button>
-    
-
         <Divider sx={{ mb: 2, mt: 1 }}>ose</Divider>
 
         <form onSubmit={handleSubmit}>
@@ -186,16 +181,15 @@ const Kyqu = () => {
             Kyçu
           </Button>
         </form>
-<Typography align="center" mt={3} variant="body2" color="#333">
-  Nuk keni llogari?{" "}
-  <span
-    style={{ color: "#ff6600", cursor: "pointer", fontWeight: 600 }}
-    onClick={() => navigate("/regjistrohu")}
-  >
-    Regjistrohu
-  </span>
-</Typography>
-
+        <Typography align="center" mt={3} variant="body2" color="#333">
+          Nuk keni llogari?{" "}
+          <span
+            style={{ color: "#ff6600", cursor: "pointer", fontWeight: 600 }}
+            onClick={() => navigate("/regjistrohu")}
+          >
+            Regjistrohu
+          </span>
+        </Typography>
       </Paper>
     </Box>
   );

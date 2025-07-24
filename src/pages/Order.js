@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+// 🟠 Shto fallback absolute URL:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -16,12 +17,12 @@ function Orders() {
     }
     fetch(`${API_URL}/api/orders/user`, {
       headers: { Authorization: `Bearer ${token}` },
-      credentials: "include"   // KJO ESHTE E RENDESISHME!
+      credentials: "include"
     })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setOrders(data);
-        else setMessage(data.message || "Gabim në marrje të porosive");
+        else setMessage(data.message || data.error || "Gabim në marrje të porosive");
         setLoading(false);
       })
       .catch(() => {

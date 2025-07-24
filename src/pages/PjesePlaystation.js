@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
 import { useCart } from '../CartContext'; // ndrysho path sipas strukturës tënde
+import "./PjeseTelefona.css";
 
 const psParts = [
   {
@@ -131,39 +132,9 @@ const PjesePlaystation = () => {
                   >
                     {item.desc}
                   </Typography>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      color: '#ff8000',
-                      fontWeight: 700,
-                      fontSize: 16,
-                      mt: 1
-                    }}
-                  >
-                    {item.price}€
-                  </Typography>
+                  
                 </CardContent>
-                <Box sx={{ width: '100%', px: 2, pb: 2 }}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      bgcolor: '#023047',
-                      color: '#fff',
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      fontSize: 14,
-                      py: 1,
-                      textTransform: 'none',
-                      transition: '.13s',
-                      '&:hover': { bgcolor: '#ff8000', color: '#fff' }
-                    }}
-                    onClick={() => addToCart(item)}
-                  >
-                    Shto në Shportë
-                  </Button>
-                </Box>
+                
               </Card>
             </Grid>
           ))}

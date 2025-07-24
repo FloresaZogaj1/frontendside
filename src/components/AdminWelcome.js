@@ -3,7 +3,8 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { useEffect, useState } from "react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+// 🟠 Ky është ndryshimi:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 export default function AdminWelcome() {
   const [sales, setSales] = useState(null);

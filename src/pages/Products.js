@@ -5,7 +5,8 @@ import { useCart } from "../CartContext";
 // Mund të përdorësh një url tëndin ose një foto default në projektin tënd
 const DEFAULT_IMAGE = "/default-product.jpg"; // vendose një foto reale në public folder
 
-const API_URL = process.env.REACT_APP_API_URL;
+// Perdor .env nëse ekziston, ndryshe URL default
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 function Products() {
   const [products, setProducts] = useState([]);

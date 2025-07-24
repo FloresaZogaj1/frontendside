@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = process.env.REACT_APP_API_URL;
+// 🟠 Shto fallback absolute URL!
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 function Profile() {
   const { token, logout } = useContext(AuthContext);
@@ -16,7 +17,7 @@ function Profile() {
     }
     fetch(`${API_URL}/api/protected`, {
       headers: { Authorization: `Bearer ${token}` },
-      credentials: "include"   // KJO ESHTE E RENDESISHME!
+      credentials: "include"
     })
       .then((res) => res.json())
       .then(setData)

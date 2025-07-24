@@ -6,6 +6,7 @@ import "./Home.css";
 import Testimonials from "../components/Testimonials";
 import { useCart } from "../CartContext";
 import demoProducts from "../data/products";
+import HeroBanner from "../components/HeroBanner";
 
 // Ikonat për kategori (Lucide React: npm install lucide-react)
 import { Smartphone, CreditCard, Layers, Grid } from 'lucide-react';
@@ -150,6 +151,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
+          <HeroBanner />
       <h2 id="produktet" style={{ marginBottom: 24, color: "#023047", fontWeight: 700 }}>
         {selectedCat === "all"
           ? "Produkte të reja"

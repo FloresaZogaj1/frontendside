@@ -65,7 +65,7 @@
   color: #222;
 }
 .subscribe-form button {
-  background: #216bf5;
+  background: #ff8000;;
   color: #fff;
   border: none;
   width: 46px;
@@ -73,7 +73,7 @@
   cursor: pointer;
   transition: background 0.14s;
 }
-.subscribe-form button:hover { background: #003ba6; }
+.subscribe-form button:hover { background: #ff8000;; }
 .footer-bottom {
   max-width: 1200px;
   margin: 0 auto;
@@ -90,6 +90,7 @@
   display: flex;
   align-items: center;
   min-width: 90px;
+  gap: 12px;
 }
 .footer-bottom-links {
   display: flex;

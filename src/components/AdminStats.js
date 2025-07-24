@@ -10,6 +10,9 @@ const orange = "#FF7200";
 const dark = "#232323";
 const bg = "#fff";
 
+// 🟠 Ky është ndryshimi:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+
 const statCards = [
   {
     label: "Produkte",
@@ -40,8 +43,6 @@ const statCards = [
     link: "/admin/orders"
   }
 ];
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 function AdminStats() {
   const [stats, setStats] = useState({});

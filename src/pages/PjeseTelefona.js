@@ -1,47 +1,41 @@
-import React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
-import { useCart } from '../CartContext'; // ndrysho path sipas strukturës tënde
+import React from "react";
+import { Box, Container, Typography, Grid, Card, CardContent, CardMedia } from "@mui/material";
+import "./PjeseTelefona.css";
 
 const phoneParts = [
   {
-    title: 'Ekran iPhone X/11/12/13',
-    image: 'https://img.freepik.com/free-vector/neon-home-screen-template-smartphone_23-2148736060.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Ekran origjinal dhe OLED për të gjitha modelet më të kërkuara.'
+    title: "Ekran iPhone X/11/12/13",
+    image: "https://img.freepik.com/free-vector/neon-home-screen-template-smartphone_23-2148736060.jpg",
+    desc: "Ekrane origjinale për iPhone X deri iPhone 13. Kualitet i lartë, montim i shpejtë."
   },
   {
-    title: 'Bateri për Samsung & iPhone',
-    image: 'https://img.freepik.com/free-photo/football-fan-accessories_23-2147827577.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Bateri me jetëgjatësi për performancë të lartë.'
+    title: "Bateri për Samsung & iPhone",
+    image: "https://img.freepik.com/free-photo/football-fan-accessories_23-2147827577.jpg",
+    desc: "Bateri të reja për të gjitha modelet kryesore, jetëgjatësi e garantuar."
   },
   {
-    title: 'Kamera & Face ID Module',
-    image: 'https://img.freepik.com/free-vector/security-cam-cctv-video-camera-street-observe-surveillance-equipment-front-side-angle-view_107791-2997.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Zëvendësim për kamera kryesore, selfie dhe module Face ID.'
-    
+    title: "Kamera & Face ID Module",
+    image: "https://img.freepik.com/free-vector/security-cam-cctv-video-camera-street-observe-surveillance-equipment-front-side-angle-view_107791-2997.jpg",
+    desc: "Kamera dhe module Face ID për iPhone & Samsung. Instalimi profesional."
   },
   {
-    title: 'Altoparlant & mikrofon',
-    image: 'https://img.freepik.com/free-photo/close-up-hand-holding-microphone_23-2148681178.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Altoparlant dhe mikrofon me zë të pastër për të gjitha modelet.'
-    
+    title: "Altoparlant & mikrofon",
+    image: "https://img.freepik.com/free-photo/close-up-hand-holding-microphone_23-2148681178.jpg",
+    desc: "Ndërrim i altoparlantit, mikrofonit dhe zgjidhje për çdo problem të zërit."
   },
   {
-    title: 'Kabllo & Aksesorë',
-    image: 'https://img.freepik.com/free-vector/mobile-phone-smartphone-charging-set-with-isolated-wires-plugs-power-banks-adapters-with-bolt-sign-vector-illustration_1284-79391.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Kabllo karikimi, adapterë, mbrojtëse ekrani dhe më shumë.'
-    
+    title: "Kabllo & Aksesorë",
+    image: "https://img.freepik.com/free-vector/mobile-phone-smartphone-charging-set-with-isolated-wires-plugs-power-banks-adapters-with-bolt-sign-vector-illustration_1284-79391.jpg",
+    desc: "Kabllo karikimi, data, powerbank, adapterë origjinalë për çdo model."
   },
   {
-    title: 'Butona anësorë & home',
-    image: 'https://img.freepik.com/free-vector/house-location-pin-red-black_78370-8743.jpg?uid=R144109746&ga=GA1.1.2116894046.1746009338&semt=ais_hybrid&w=740',
-    desc: 'Butona anësorë, butoni home ose fingerprint për të gjitha modelet.'
-    
+    title: "Butona anësorë & home",
+    image: "https://img.freepik.com/free-vector/house-location-pin-red-black_78370-8743.jpg",
+    desc: "Riparim/ndërrim për butona volume, power, ose home."
   }
 ];
 
 const PjeseTelefona = () => {
-  const { addToCart } = useCart();
-
   return (
     <Box sx={{ bgcolor: '#f9fafd', minHeight: '100vh', py: { xs: 5, md: 8 } }}>
       <Container maxWidth="lg">
@@ -129,29 +123,7 @@ const PjeseTelefona = () => {
                   >
                     {item.desc}
                   </Typography>
-                  
                 </CardContent>
-                <Box sx={{ width: '100%', px: 2, pb: 2 }}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      bgcolor: '#023047',
-                      color: '#fff',
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      fontSize: 14,
-                      py: 1,
-                      textTransform: 'none',
-                      transition: '.13s',
-                      '&:hover': { bgcolor: '#ff8000', color: '#fff' }
-                    }}
-                    onClick={() => addToCart(item)}
-                  >
-                    Shto në Shportë
-                  </Button>
-                </Box>
               </Card>
             </Grid>
           ))}

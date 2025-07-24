@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+// 🟠 Ky është ndryshimi:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);

@@ -23,11 +23,13 @@ const STATUS_COLORS = {
   "Refuzuar": { color: "error", bg: "#ffe4e4", text: "#b80020" }
 };
 
+// 🟠 KY ËSHTË NDRYSHIMI:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [deleteId, setDeleteId] = useState(null);
   const [changingId, setChangingId] = useState(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/orders`, {
@@ -37,13 +39,11 @@ const AdminOrders = () => {
     })
       .then(res => res.json())
       .then(data => {
-        // Sigurohu që data është array, ndryshe vendos bosh
         setOrders(Array.isArray(data) ? data : []);
       });
-  }, [API_URL]);
+  }, []);
 
-  // Ndrysho statusin
-  const handleStatusChange = async (id, newStatus) => {    
+  const handleStatusChange = async (id, newStatus) => {
     setChangingId(id);
     await fetch(`${API_URL}/api/admin/orders/${id}`, {
       method: "PATCH",

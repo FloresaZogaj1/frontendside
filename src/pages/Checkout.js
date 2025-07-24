@@ -2,7 +2,8 @@ import React from "react";
 import { useCart } from "../CartContext";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = process.env.REACT_APP_API_URL;
+// 🟠 Shto fallback absolute URL:
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
 
 function Checkout() {
   const { cart, total, clearCart } = useCart();
@@ -35,7 +36,7 @@ function Checkout() {
       clearCart();
       navigate("/");
     } else {
-      alert("Gabim: " + (data.message || "Checkout dështoi"));
+      alert("Gabim: " + (data.message || data.error || "Checkout dështoi"));
     }
   };
 
