@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Box, Paper, Typography, TextField, Button, Divider } from "@mui/material";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext"; // SHTO KËTË
 
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production.up.railway.app";
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -11,6 +12,7 @@ function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth(); // MERR login nga context-i
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -25,9 +27,7 @@ function Login() {
       });
       const data = await res.json();
       if (res.ok && data.token && data.user) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
+        login(data.token, data.user); // SAKT KËTU THIRRET
         // Redirection sipas rolit
         if (data.user.role === "admin") {
           navigate("/warranty");
@@ -42,6 +42,7 @@ function Login() {
     }
   };
 
+  // Google login handler
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/google`, {
@@ -50,11 +51,8 @@ function Login() {
         body: JSON.stringify({ token: credentialResponse.credential })
       });
       const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Redirection sipas rolit
+      if (res.ok && data.token && data.user) {
+        login(data.token, data.user); // EDHE KËTU
         if (data.user.role === "admin") {
           navigate("/warranty");
         } else {

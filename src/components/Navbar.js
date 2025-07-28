@@ -72,7 +72,7 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
   const { cart } = useCart();
-  const { loggedIn, logout } = useAuth();
+const { user, loggedIn, logout } = useAuth();
 
   React.useEffect(() => {
     const closeDropdown = (e) => {
@@ -383,36 +383,41 @@ const Navbar = () => {
             </Link>
             {/* Buton login/kyqu nëse s'është logged in */}
             {!loggedIn && (
-              <Button
-                component={Link}
-                to="/login"
-                sx={{
-                  color: "#fff",
-                  bgcolor: "#ff8000",
-                  borderRadius: 3,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  ml: 1,
-                  px: 2.2,
-                  py: 1.1,
-                  boxShadow: 1,
-                  '&:hover': { bgcolor: "#ff6600", color: "#fff" },
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1
-                }}
-                startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
-              >
-                Kyqu
-              </Button>
-            )}
+  <Button
+    component={Link}
+    to="/login"
+    sx={{
+      color: "#fff",
+      bgcolor: "#ff8000",
+      borderRadius: 3,
+      textTransform: "none",
+      fontWeight: 600,
+      ml: 1,
+      px: 2.2,
+      py: 1.1,
+      boxShadow: 1,
+      '&:hover': { bgcolor: "#ff6600", color: "#fff" },
+      display: "flex",
+      alignItems: "center",
+      gap: 1
+    }}
+    startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
+  >
+    Kyçu
+  </Button>
+)}
 
-            {/* Logout për çdo user të kyçur */}
-            {loggedIn && (
-              <Button onClick={onLogout} sx={{ color: "#ff8000", fontWeight: 600 }}>
-                Dil
-              </Button>
-            )}
+{loggedIn && (
+  <>
+    <span style={{ color: "#ff8000", marginRight: 12, fontWeight: 500 }}>
+      {user?.name || user?.email}
+    </span>
+    <Button onClick={onLogout} sx={{ color: "#ff8000", fontWeight: 600 }}>
+      Dil
+    </Button>
+  </>
+)}
+
           </Box>
         </Toolbar>
       </Container>
