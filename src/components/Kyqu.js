@@ -37,27 +37,29 @@ const Kyqu = () => {
 
   // Kyçja me email/password (login klasik)
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: email, password }),
-      });
-      const data = await res.json();
-  
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/");
-      } else {
-        alert(data.error || "Gabim gjatë kyçjes!");
-      }
-    } catch (err) {
-      alert("Gabim gjatë kyçjes!");
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/");
+    } else {
+      alert(data.msg || "Gabim gjatë kyçjes!");
     }
-    setLoading(false);
-  };
+  } catch (err) {
+    alert("Gabim gjatë kyçjes!");
+  }
+  setLoading(false);
+};
+
 
   return (
     <Box

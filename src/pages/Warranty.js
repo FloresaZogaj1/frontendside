@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box, Typography, TextField, Button, MenuItem, Paper, Alert, Select, FormControl, InputLabel
 } from "@mui/material";
-import logo from "../assets/PFP-01__5_-removebg-preview.png"; // ndrysho path sipas projektit
+import { useNavigate } from "react-router-dom"; // ✅ Shtuar për navigim
+import logo from "../assets/PFP-01__5_-removebg-preview.png";
 
 function getTodayDate() {
   const today = new Date();
@@ -198,6 +199,16 @@ const Warranty = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPrint, setShowPrint] = useState(false);
+
+  const navigate = useNavigate(); // ✅ Navigim për kontrollin e adminit
+
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || user.role !== "admin") {
+    navigate("/"); // ridrejto në home nëse s’është admin
+  }
+}, []);
+
 
   const validateIMEI = imei => /^\d{14}$/.test(imei);
   const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

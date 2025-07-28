@@ -36,11 +36,13 @@ import AdminOrders from "./components/AdminOrders";
 import AdminWelcome from "./components/AdminWelcome";
 import AdminRoute from "./components/AdminRoute";
 import Warranty from "./pages/Warranty";
+import Kyqu from "./components/Kyqu";
+import Regjistrohu from "./components/Regjistrohu";
+import Profile from "./pages/Profile";
+import NoAccess from "./pages/NoAccess";
 
 // Komponenti për profilin e mbrojtur
-function Profile() {
-  return <div>Profili i mbrojtur (vetëm i kyçur)</div>;
-}
+
 
 // Hook për ruajtjen e token-it në localStorage
 function TokenHandler() {
@@ -96,13 +98,16 @@ function App() {
             <Route path="/sherbimet/playstation" element={<PjesePlaystation />} />
             <Route path="/sherbimet/servisi" element={<ServisiPerkrahja />} />
             <Route path="/sherbimet/asistenca" element={<AsistencaMobile />} />
+            <Route path="/regjistrohu" element={<Regjistrohu />} />
+<Route path="/kycu" element={<Kyqu />} />
+
 
             {/* Faqe private */}
-            <Route path="/profile" element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            } />
+          
+
+<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+
+<Route path="/no-access" element={<NoAccess />} />
 
             {/* ADMIN PANEL */}
             <Route path="/admin" element={<AdminLayout />}>

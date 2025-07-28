@@ -15,32 +15,30 @@ const Regjistrohu = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const res = await fetch(`${API_URL}/api/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: emri, // ose "name" varet nga backend-i yt
-          email,
-          password,
-          phone: tel
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Gabim gjatë regjistrimit!");
-        return;
-      }
-      // Opsional: Ruaj token në localStorage nëse backend-i kthen token
-      if (data.token) localStorage.setItem("token", data.token);
-      // Ridrejto te login
-      navigate("/kycu");
-    } catch (err) {
-      setError("Gabim gjatë lidhjes me serverin!");
+  e.preventDefault();
+  setError("");
+  try {
+    const res = await fetch(`${API_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: emri,
+        email,
+        password,
+        // phone: tel, // vetëm nëse e ke në DB dhe backend!
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.msg || "Gabim gjatë regjistrimit!");
+      return;
     }
-  };
+    if (data.token) localStorage.setItem("token", data.token);
+    navigate("/kycu");
+  } catch (err) {
+    setError("Gabim gjatë lidhjes me serverin!");
+  }
+};
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
