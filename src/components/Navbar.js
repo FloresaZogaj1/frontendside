@@ -27,14 +27,14 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import logo from "../assets/PFP-01__5_-removebg-preview.png";
+import logo from "../assets/top-mobile copy.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../CartContext";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAuth } from "../AuthContext";
-import { IoLogoApple, IoLogoAndroid, IoCardOutline, IoHeadsetOutline } from "react-icons/io5";
-import './Navbar.css';
+import { IoLogoApple, IoCardOutline, IoHeadsetOutline } from "react-icons/io5";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
+import "./Navbar.css";
 
 const productMenu = [
   {
@@ -43,13 +43,12 @@ const productMenu = [
     path: "/products/iphone",
     color: "#555",
   },
- {
-  label: "Samsung",
-  icon: <PhoneAndroidIcon />, // në vend të <IoLogoAndroid />
-  path: "/products/samsung",
-  color: "#3ddc84",
-},
-
+  {
+    label: "Samsung",
+    icon: <PhoneAndroidIcon />,
+    path: "/products/samsung",
+    color: "#3ddc84",
+  },
   {
     label: "Gift Card",
     icon: <IoCardOutline />,
@@ -72,7 +71,7 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
   const { cart } = useCart();
-const { user, loggedIn, logout } = useAuth();
+  const { user, loggedIn, logout } = useAuth();
 
   React.useEffect(() => {
     const closeDropdown = (e) => {
@@ -108,17 +107,44 @@ const { user, loggedIn, logout } = useAuth();
 
   // ---- DRAWER për MOBILE ----
   const drawer = (
-    <Box sx={{ width: 280 }} role="presentation">
+    <Box sx={{ width: { xs: '100vw', sm: 280 }, maxWidth: '100vw' }} role="presentation">
       {/* Header with logo + close */}
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: 2 }}>
         <Link to="/">
-          <img src={logo} alt="Top Mobile" style={{ height: 50 }} />
+          <img src={logo} alt="Top Mobile" className="navbar-logo" />
         </Link>
         <IconButton onClick={() => setMobileOpen(false)}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
+      {/* SEARCH in mobile */}
+      <Box sx={{ display: { xs: "block", sm: "none" }, px: 2, mb: 2 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Çfarë po kërkoni?"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch(e);
+              setMobileOpen(false);
+            }
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon
+                  sx={{ color: "#aaa", cursor: "pointer" }}
+                  onClick={(e) => { handleSearch(e); setMobileOpen(false); }}
+                />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
       <List>
         {/* Home */}
         <ListItem disablePadding>
@@ -129,12 +155,12 @@ const { user, loggedIn, logout } = useAuth();
             <ListItemText primary="Ballina" primaryTypographyProps={{ fontWeight: 600 }} />
           </ListItemButton>
         </ListItem>
-        {/* Products Accordion --- ME IKONA & GLASS --- */}
+        {/* Products Accordion */}
         <Accordion sx={{ boxShadow: "none" }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#ff8000" }} />} sx={{ px: 2 }}>
             <Typography sx={{ fontWeight: 600, color: "#ff8000" }}>Produktet</Typography>
           </AccordionSummary>
-          <AccordionDetails sx={{ p: 0, bgcolor: "rgba(255,255,255,0.7)", borderRadius: 2, mb: 1 }}>
+          <AccordionDetails sx={{ p: 0, bgcolor: "rgba(236, 122, 15, 0.07)", borderRadius: 2, mb: 1 }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               {productMenu.map((item) => (
                 <Link
@@ -152,7 +178,7 @@ const { user, loggedIn, logout } = useAuth();
                       background: "rgba(255,255,255,0.48)",
                       margin: "0 12px",
                       backdropFilter: "blur(12px)",
-                      boxShadow: "0 4px 16px rgba(50,50,60,0.04)",
+                      boxShadow: "0 4px 16px hsla(24, 92%, 76%, 0.04)",
                       transition: "background .19s"
                     }}>
                     <span className="menu-glass-icon" style={{ color: item.color, fontSize: 23, marginRight: 15 }}>
@@ -198,13 +224,53 @@ const { user, loggedIn, logout } = useAuth();
           </ListItemButton>
         </ListItem>
       </List>
+      <Divider />
+      <Box sx={{ px: 2, py: 2 }}>
+        <Link to="/cart" onClick={() => setMobileOpen(false)}>
+          <Button fullWidth variant="contained" sx={{ bgcolor: "#ff8000", color: "#fff", fontWeight: 600 }}>
+            <ShoppingCartIcon sx={{ mr: 1 }} /> Shporta {cart?.length > 0 ? `(${cart.length})` : ""}
+          </Button>
+        </Link>
+      </Box>
+      <Box sx={{ px: 2, pb: 2 }}>
+        {!loggedIn ? (
+          <Button
+            component={Link}
+            to="/login"
+            fullWidth
+            sx={{
+              color: "#fff",
+              bgcolor: "#ff8000",
+              borderRadius: 3,
+              textTransform: "none",
+              fontWeight: 600,
+              px: 2.2,
+              py: 1.1,
+              boxShadow: 1,
+              '&:hover': { bgcolor: "#ff6600", color: "#fff" },
+              display: "flex",
+              alignItems: "center",
+              gap: 1
+            }}
+            startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
+            onClick={() => setMobileOpen(false)}
+          >
+            Kyçu
+          </Button>
+        ) : (
+          <Button onClick={() => { onLogout(); setMobileOpen(false); }} fullWidth sx={{ color: "#ff8000", fontWeight: 600 }}>
+            Dil ({user?.name || user?.email})
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 
   return (
     <AppBar position="static" sx={{ background: "#fff", color: "#ff8000", boxShadow: 2 }}>
       <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ justifyContent: "space-between", minHeight: 82 }}>
+        <Toolbar disableGutters sx={{ justifyContent: "space-between", minHeight: { xs: 60, md: 82 } }}>
+          {/* Mobile Hamburger */}
           <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", mr: 1 }}>
             <IconButton
               size="large"
@@ -220,22 +286,31 @@ const { user, loggedIn, logout } = useAuth();
             open={mobileOpen}
             onClose={() => setMobileOpen(false)}
             ModalProps={{ keepMounted: true }}
+            PaperProps={{
+              sx: {
+                width: { xs: '100vw', sm: 280 },
+                maxWidth: '100vw',
+                bgcolor: "#fff",
+                border: 0,
+                '@media (max-width:600px)': {
+                  borderRadius: 0,
+                }
+              }
+            }}
           >
             {drawer}
           </Drawer>
-
+          {/* Logo */}
           <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
             <Link to="/">
-              <img src={logo} alt="Top Mobile Logo" style={{ height: 70, objectFit: "contain" }} />
+              <img src={logo} alt="Top Mobile Logo" className="navbar-logo" style={{ height: 70, objectFit: "contain" }} />
             </Link>
           </Box>
-
           {/* Desktop Navigation */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1.5 }}>
             <Button component={Link} to="/" sx={{ color: "#ff8000", fontWeight: 600 }}>
               Ballina
             </Button>
-
             {/* --- PRODUKTET CUSTOM GRID DROPDOWN --- */}
             <Box sx={{ position: "relative" }}>
               <Button
@@ -274,7 +349,6 @@ const { user, loggedIn, logout } = useAuth();
                 </Box>
               )}
             </Box>
-
             <Button
               sx={{ color: "#ff8000", fontWeight: 600 }}
               endIcon={<ArrowDropDownIcon />}
@@ -303,12 +377,11 @@ const { user, loggedIn, logout } = useAuth();
                 Asistencë Mobile
               </MenuItem>
             </Menu>
-
             <Button component={Link} to="/blog" sx={{ color: "#ff8000", fontWeight: 600 }}>
               Blog
             </Button>
           </Box>
-
+          {/* Search bar: visible on >=sm */}
           <Box
             sx={{
               flexGrow: 1,
@@ -343,8 +416,8 @@ const { user, loggedIn, logout } = useAuth();
               }}
             />
           </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.3 }}>
+          {/* Actions: Cart, Help, Login/Logout */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 1.3 } }}>
             <Button sx={{ minWidth: 0, p: 0, color: "#ff8000" }} onClick={handleOpenHelpMenu}>
               <span style={{ fontSize: 22 }}>❓</span>
             </Button>
@@ -359,7 +432,6 @@ const { user, loggedIn, logout } = useAuth();
                 Kushtet & Kujdesi ndaj Klientit
               </MenuItem>
             </Menu>
-
             <Link to="/cart">
               <IconButton sx={{ color: "#ff8000", position: "relative" }}>
                 <ShoppingCartIcon />
@@ -381,43 +453,40 @@ const { user, loggedIn, logout } = useAuth();
                 )}
               </IconButton>
             </Link>
-            {/* Buton login/kyqu nëse s'është logged in */}
             {!loggedIn && (
-  <Button
-    component={Link}
-    to="/login"
-    sx={{
-      color: "#fff",
-      bgcolor: "#ff8000",
-      borderRadius: 3,
-      textTransform: "none",
-      fontWeight: 600,
-      ml: 1,
-      px: 2.2,
-      py: 1.1,
-      boxShadow: 1,
-      '&:hover': { bgcolor: "#ff6600", color: "#fff" },
-      display: "flex",
-      alignItems: "center",
-      gap: 1
-    }}
-    startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
-  >
-    Kyçu
-  </Button>
-)}
-
-{loggedIn && (
-  <>
-    <span style={{ color: "#ff8000", marginRight: 12, fontWeight: 500 }}>
-      {user?.name || user?.email}
-    </span>
-    <Button onClick={onLogout} sx={{ color: "#ff8000", fontWeight: 600 }}>
-      Dil
-    </Button>
-  </>
-)}
-
+              <Button
+                component={Link}
+                to="/login"
+                sx={{
+                  color: "#fff",
+                  bgcolor: "#ff8000",
+                  borderRadius: 3,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  ml: 1,
+                  px: 2.2,
+                  py: 1.1,
+                  boxShadow: 1,
+                  '&:hover': { bgcolor: "#ff6600", color: "#fff" },
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1
+                }}
+                startIcon={<AccountCircleIcon sx={{ color: "#fff" }} />}
+              >
+                Kyçu
+              </Button>
+            )}
+            {loggedIn && (
+              <>
+                <span style={{ color: "#ff8000", marginRight: 12, fontWeight: 500 }}>
+                  {user?.name || user?.email}
+                </span>
+                <Button onClick={onLogout} sx={{ color: "#ff8000", fontWeight: 600 }}>
+                  Dil
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Container>

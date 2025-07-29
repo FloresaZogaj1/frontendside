@@ -373,7 +373,7 @@ const Warranty = () => {
               <div className="warranty-grid-row">
                 <div>
                   <div className="warranty-details-row"><span className="warranty-label">Klienti:</span> {form.emri} {form.mbiemri}</div>
-                  <div className="warranty-details-row"><span className="warranty-label">Data e fillimit te garancionit:</span> {form.data}</div>
+                  <div className="warranty-details-row"><span className="warranty-label">Data :</span> {form.data}</div>
                 </div>
                 <div>
                   <div className="warranty-details-row"><span className="warranty-label">Detajet:</span> Çmimi: {form.cmimi}€</div>
@@ -384,7 +384,7 @@ const Warranty = () => {
               <thead>
                 <tr>
                   <th>Modeli</th>
-                  <th>ImeI</th>
+                  <th>IMEI</th>
                   <th>Software Info</th>
                   <th>Kohëzgjatja e garancionit</th>
                 </tr>

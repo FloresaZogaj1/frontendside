@@ -1,194 +1,106 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box, Paper, Typography, Table, TableHead, TableBody, TableRow, TableCell,
-  Button, TextField, IconButton, Dialog, DialogTitle, DialogActions, DialogContent
-} from "@mui/material";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
 
-// 🟠 Ky është ndryshimi:
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+const TOKEN = localStorage.getItem("token"); // vendos si ruan adminin
 
-function AdminProducts() {
+export default function AdminProducts() {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ name: "", price: "", category: "" });
-  const [editProduct, setEditProduct] = useState(null);
-  const [deleteId, setDeleteId] = useState(null);
-  const token = localStorage.getItem("token");
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({ name: "", price: "", description: "", image: "" });
+  const [loading, setLoading] = useState(false);
 
-  const refresh = () => {
+  function fetchProducts() {
+    setLoading(true);
     fetch(`${API_URL}/api/admin/products`, {
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: "include"
+      headers: { Authorization: `Bearer ${TOKEN}` }
     })
-      .then(res => res.json())
-      .then(setProducts);
-  };
+      .then((r) => r.json())
+      .then(setProducts)
+      .finally(() => setLoading(false));
+  }
 
-  useEffect(() => {
-    refresh();
-  }, [token]);
+  useEffect(() => { fetchProducts(); }, []);
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    await fetch(`${API_URL}/api/admin/products`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name: form.name,
-        price: parseFloat(form.price),
-        category: form.category
-      }),
-      credentials: "include"
-    });
-    setForm({ name: "", price: "", category: "" });
-    refresh();
-  };
-
-  const handleDelete = async () => {
-    await fetch(`${API_URL}/api/admin/products/${deleteId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: "include"
-    });
-    setDeleteId(null);
-    refresh();
-  };
-
-  const startEdit = (product) => {
-    setEditProduct({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      category: product.category
-    });
-  };
-
-  const saveEdit = async () => {
-    if (!editProduct) return;
-    await fetch(`${API_URL}/api/admin/products/${editProduct.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name: editProduct.name,
-        price: editProduct.price,
-        category: editProduct.category,
-      }),
-      credentials: "include"
-    });
-    setEditProduct(null);
-    refresh();
-  };
+  function onEdit(p) {
+    setEditing(p.id);
+    setForm({ ...p });
+  }
+  function onCancel() {
+    setEditing(null);
+    setForm({ name: "", price: "", description: "", image: "" });
+  }
+  function onChange(e) {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  }
+  function onSave() {
+    const method = editing ? "PUT" : "POST";
+    const url = editing
+      ? `${API_URL}/api/admin/products/${editing}`
+      : `${API_URL}/api/admin/products`;
+    fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
+      body: JSON.stringify(form)
+    })
+      .then(() => { fetchProducts(); onCancel(); });
+  }
+  function onDelete(id) {
+    if (window.confirm("Fshije këtë produkt?"))
+      fetch(`${API_URL}/api/admin/products/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${TOKEN}` }
+      }).then(fetchProducts);
+  }
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: "auto", mt: 7 }}>
-      <Typography variant="h4" fontWeight={700} mb={4}>Menaxho Produktet</Typography>
-      <Paper sx={{ p: 2, mb: 4, display: "flex", gap: 2 }}>
-        <TextField
-          label="Emri *"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          required
-          sx={{ flex: 1, bgcolor: "#fff" }}
-        />
-        <TextField
-          label="Çmimi *"
-          type="number"
-          value={form.price}
-          onChange={e => setForm({ ...form, price: e.target.value })}
-          required
-          sx={{ flex: 1, bgcolor: "#fff" }}
-        />
-        <TextField
-          label="Kategoria *"
-          value={form.category}
-          onChange={e => setForm({ ...form, category: e.target.value })}
-          required
-          sx={{ flex: 1, bgcolor: "#fff" }}
-        />
-        <Button
-          onClick={handleAdd}
-          variant="contained"
-          sx={{ bgcolor: "#ff8000", color: "#fff", px: 4, borderRadius: 2, fontWeight: 700, "&:hover": { bgcolor: "#e67200" } }}
-        >
-          SHTO
-        </Button>
-      </Paper>
-      <Paper sx={{ borderRadius: 3, boxShadow: 2, p: 1 }}>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: "#ff800010" }}>
-              <TableCell>ID</TableCell>
-              <TableCell>Emri</TableCell>
-              <TableCell>Çmimi</TableCell>
-              <TableCell>Kategoria</TableCell>
-              <TableCell align="center">Veprim</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell>{p.id}</TableCell>
-                <TableCell>{p.name}</TableCell>
-                <TableCell>{p.price}</TableCell>
-                <TableCell>{p.category}</TableCell>
-                <TableCell align="center">
-                  <IconButton color="warning" onClick={() => startEdit(p)}><EditIcon /></IconButton>
-                  <IconButton color="error" onClick={() => setDeleteId(p.id)}><DeleteOutlineIcon /></IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-      <Dialog open={!!editProduct} onClose={() => setEditProduct(null)}>
-        <DialogTitle>Ndrysho Produktin</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Emri"
-            value={editProduct?.name || ""}
-            onChange={e => setEditProduct({ ...editProduct, name: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Çmimi"
-            type="number"
-            value={editProduct?.price || ""}
-            onChange={e => setEditProduct({ ...editProduct, price: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="dense"
-            label="Kategoria"
-            value={editProduct?.category || ""}
-            onChange={e => setEditProduct({ ...editProduct, category: e.target.value })}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button startIcon={<CloseIcon />} onClick={() => setEditProduct(null)}>Anulo</Button>
-          <Button startIcon={<SaveIcon />} onClick={saveEdit} sx={{ bgcolor: "#ff8000", color: "#fff", "&:hover": { bgcolor: "#e67200" } }}>Ruaj</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-        <DialogTitle>Je i sigurt që do ta fshish këtë produkt?</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setDeleteId(null)} color="inherit">Anulo</Button>
-          <Button onClick={handleDelete} color="error" variant="contained" sx={{ background: "#ff8000" }}>Fshi</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    <div>
+      <h3>Menaxho Produktet</h3>
+      <div style={{ margin: "18px 0", padding: 16, background: "#fafafa", borderRadius: 8 }}>
+        <input name="name" value={form.name} onChange={onChange} placeholder="Emri" style={inputStyle} />
+        <input name="price" value={form.price} onChange={onChange} placeholder="Çmimi" style={inputStyle} />
+        <input name="description" value={form.description} onChange={onChange} placeholder="Përshkrimi" style={inputStyle} />
+        <input name="image" value={form.image} onChange={onChange} placeholder="Link Foto" style={inputStyle} />
+        {editing ? (
+          <>
+            <button onClick={onSave} style={saveBtn}>Ruaj Ndryshimet</button>
+            <button onClick={onCancel} style={cancelBtn}>Anulo</button>
+          </>
+        ) : (
+          <button onClick={onSave} style={saveBtn}>Shto Produkt</button>
+        )}
+      </div>
+      <table style={{ width: "100%", background: "#fff", borderRadius: 7, boxShadow: "0 1px 6px #112f4b10", overflow: "hidden" }}>
+        <thead>
+          <tr style={{ background: "#f8f8f8" }}>
+            <th>ID</th>
+            <th>Emri</th>
+            <th>Çmimi</th>
+            <th>Foto</th>
+            <th>Përshkrimi</th>
+            <th>Veprime</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? <tr><td colSpan={6}>Duke ngarkuar...</td></tr> : products.map((p) => (
+            <tr key={p.id}>
+              <td>{p.id}</td>
+              <td>{p.name}</td>
+              <td>€{p.price}</td>
+              <td>{p.image && <img src={p.image} alt="" style={{ width: 42, borderRadius: 4 }} />}</td>
+              <td style={{ maxWidth: 210 }}>{p.description}</td>
+              <td>
+                <button onClick={() => onEdit(p)} style={actionBtn}>Edito</button>
+                <button onClick={() => onDelete(p.id)} style={actionBtnDel}>Fshij</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
-
-export default AdminProducts;
+const inputStyle = { marginRight: 12, padding: "7px 12px", borderRadius: 6, border: "1px solid #ddd", marginBottom: 8 };
+const saveBtn = { padding: "8px 22px", background: "#ff8000", color: "#fff", border: "none", borderRadius: 6, fontWeight: 600, marginRight: 7, cursor: "pointer" };
+const cancelBtn = { padding: "8px 12px", background: "#eee", border: "none", borderRadius: 6, fontWeight: 600, color: "#555", cursor: "pointer" };
+const actionBtn = { padding: "6px 13px", marginRight: 5, background: "#eee", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" };
+const actionBtnDel = { ...actionBtn, background: "#ffb5b5", color: "#a00" };

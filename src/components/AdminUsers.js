@@ -9,7 +9,7 @@ function AdminUsers() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch(`${API_URL}/api/admin/users`, {
+    fetch(`${API_URL}/api/admin/users_new`, {
       headers: { Authorization: `Bearer ${token}` },
       credentials: "include"
     })
@@ -18,7 +18,7 @@ function AdminUsers() {
   }, [token, reload]);
 
   const handleDelete = async (id) => {
-    await fetch(`${API_URL}/api/admin/users/${id}`, {
+    await fetch(`${API_URL}/api/admin/users_new/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
       credentials: "include"
@@ -27,7 +27,7 @@ function AdminUsers() {
   };
 
   const handleRole = async (id, role) => {
-    await fetch(`${API_URL}/api/admin/users/${id}/role`, {
+    await fetch(`${API_URL}/api/admin/users_new/${id}/role`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +40,7 @@ function AdminUsers() {
   };
 
   const handleBlock = async (id) => {
-    await fetch(`${API_URL}/api/admin/users/${id}/block`, {
+    await fetch(`${API_URL}/api/admin/users_new/${id}/block`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
       credentials: "include"

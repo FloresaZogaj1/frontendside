@@ -1,112 +1,46 @@
-import { useEffect, useState } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import PeopleIcon from "@mui/icons-material/People";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PaidIcon from "@mui/icons-material/Paid";
-import { Link } from "react-router-dom";
-
-const orange = "#FF7200";
-const dark = "#232323";
-const bg = "#fff";
-
-// 🟠 Ky është ndryshimi:
+import React, { useEffect, useState } from "react";
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production-f7ae.up.railway.app";
+const TOKEN = localStorage.getItem("token");
 
-const statCards = [
-  {
-    label: "Produkte",
-    icon: <InventoryIcon sx={{ fontSize: 42, color: orange }} />,
-    key: "totalProducts",
-    color: orange,
-    link: "/admin/products"
-  },
-  {
-    label: "Përdorues",
-    icon: <PeopleIcon sx={{ fontSize: 42, color: dark }} />,
-    key: "totalUsers",
-    color: dark,
-    link: "/admin/users"
-  },
-  {
-    label: "Porosi",
-    icon: <ShoppingCartIcon sx={{ fontSize: 42, color: orange }} />,
-    key: "totalOrders",
-    color: orange,
-    link: "/admin/orders"
-  },
-  {
-    label: "Shitje Totale (€)",
-    icon: <PaidIcon sx={{ fontSize: 42, color: dark }} />,
-    key: "totalSales",
-    color: dark,
-    link: "/admin/orders"
-  }
-];
-
-function AdminStats() {
-  const [stats, setStats] = useState({});
-  const token = localStorage.getItem("token");
+export default function AdminStats() {
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/admin/stats`, {
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: "include"
+      headers: { Authorization: `Bearer ${TOKEN}` }
     })
-      .then(res => res.json())
-      .then(data => setStats(data));
-  }, [token]);
+      .then(r => r.json())
+      .then(setStats);
+  }, []);
+
+  if (!stats) return <div>Duke ngarkuar statistikat...</div>;
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", pt: 2 }}>
-      <Typography variant="h5" fontWeight={700} mb={3} color={orange}>
-        Statistikat Kryesore
-      </Typography>
-      <Grid container spacing={3}>
-        {statCards.map(card => (
-          <Grid item xs={12} sm={6} md={3} key={card.key}>
-            <Box
-              component={Link}
-              to={card.link}
-              sx={{
-                textDecoration: "none",
-                display: "block"
-              }}
-            >
-              <Paper
-                elevation={4}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  p: 3,
-                  bgcolor: bg,
-                  borderRadius: 3,
-                  borderBottom: `4px solid ${card.color}`,
-                  boxShadow: `0 8px 32px ${orange}15`,
-                  transition: "transform 0.14s, box-shadow 0.14s",
-                  cursor: "pointer",
-                  "&:hover": {
-                    transform: "translateY(-4px) scale(1.05)",
-                    boxShadow: `0 16px 48px ${card.color}30`,
-                    bgcolor: "#FFF6F0"
-                  }
-                }}
-              >
-                {card.icon}
-                <Typography mt={2} fontWeight={600} fontSize={28} color={card.color}>
-                  {stats[card.key] !== undefined ? stats[card.key] : "..."}
-                </Typography>
-                <Typography color={dark} fontWeight={500} fontSize={16}>
-                  {card.label}
-                </Typography>
-              </Paper>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+    <div style={{ display: "flex", gap: 28, flexWrap: "wrap", marginTop: 18 }}>
+      <StatCard label="Totali i Produkteve" value={stats.totalProducts} />
+      <StatCard label="Totali i Porosive" value={stats.totalOrders} />
+      <StatCard label="Totali i Shitjeve (€)" value={stats.totalSales?.toFixed(2)} />
+      <StatCard label="Përdorues aktivë" value={stats.totalUsers} />
+    </div>
   );
 }
 
-export default AdminStats;
+function StatCard({ label, value }) {
+  return (
+    <div style={{
+      minWidth: 180,
+      background: "#fff7e8",
+      borderRadius: 14,
+      padding: "28px 18px",
+      textAlign: "center",
+      boxShadow: "0 1px 8px #ffb26b19"
+    }}>
+      <div style={{ color: "#ff8000", fontWeight: 800, fontSize: 30, marginBottom: 9 }}>
+        {value}
+      </div>
+      <div style={{ color: "#111", fontWeight: 600, fontSize: 17, letterSpacing: "-.5px" }}>
+        {label}
+      </div>
+    </div>
+  );
+}

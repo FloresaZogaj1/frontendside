@@ -41,9 +41,6 @@ import Regjistrohu from "./components/Regjistrohu";
 import Profile from "./pages/Profile";
 import NoAccess from "./pages/NoAccess";
 
-// Komponenti për profilin e mbrojtur
-
-
 // Hook për ruajtjen e token-it në localStorage
 function TokenHandler() {
   const navigate = useNavigate();
@@ -85,7 +82,6 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/blog" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/products-list" element={<ProductsLists />} />
@@ -99,46 +95,40 @@ function App() {
             <Route path="/sherbimet/servisi" element={<ServisiPerkrahja />} />
             <Route path="/sherbimet/asistenca" element={<AsistencaMobile />} />
             <Route path="/regjistrohu" element={<Regjistrohu />} />
-<Route path="/kycu" element={<Kyqu />} />
-
+            <Route path="/kycu" element={<Kyqu />} />
 
             {/* Faqe private */}
-          
+            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
-<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-
-
-            {/* ADMIN PANEL */}
-           <Route
-  path="/admin/*"
-  element={
-    <AdminRoute>
-      <AdminLayout />
-    </AdminRoute>
-  }
-/>
-            <Route path="/no-access" element={<NoAccess />} />
-
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
-            <Route path="/order" element={<AdminOrders />} />
+            {/* ADMIN PANEL - nested */}
             <Route
-  path="/sherbimet/mirembajtja"
-  element={
-    <AdminRoute>
-      <Mirembajtja />
-    </AdminRoute>
-  }
-/>
-<Route
-  path="/warranty"
-  element={
-    <AdminRoute>
-      <Warranty />
-    </AdminRoute>
-  }
-/>
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminLayout />
+                </AdminRoute>
+              }
+            >
+              <Route index element={<AdminWelcome />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="stats" element={<AdminStats />} />
+            </Route>
 
+            {/* Route për warranty vetëm për admin */}
+            <Route
+              path="/warranty"
+              element={
+                <AdminRoute>
+                  <Warranty />
+                </AdminRoute>
+              }
+            />
+
+            {/* No access & fallback */}
+            <Route path="/no-access" element={<NoAccess />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Footer />
         </Router>
