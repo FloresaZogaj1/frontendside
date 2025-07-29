@@ -107,16 +107,17 @@ function App() {
 
 <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
-<Route path="/no-access" element={<NoAccess />} />
 
             {/* ADMIN PANEL */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminWelcome />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="stats" element={<AdminStats />} />
-                            <Route path="products" element={<AdminProducts />} />
-
-            </Route>
+           <Route
+  path="/admin/*"
+  element={
+    <AdminRoute>
+      <AdminLayout />
+    </AdminRoute>
+  }
+/>
+            <Route path="/no-access" element={<NoAccess />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" />} />
