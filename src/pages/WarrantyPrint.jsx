@@ -116,7 +116,7 @@ const WarrantyPrint = forwardRef(({
       <div className="warranty-grid">
         <div>
           <div className="warranty-details-row"><span className="warranty-label">Klienti:</span> {klienti}</div>
-          <div className="warranty-details-row"><span className="warranty-label">Data e fillimit te garancionit:</span> {dataFillimit}</div>
+          <div className="warranty-details-row"><span className="warranty-label">Data:</span> {dataFillimit}</div>
         </div>
         <div>
           <div className="warranty-details-row"><span className="warranty-label">Detajet:</span> Çmimi: {cmimi}€</div>
@@ -127,7 +127,7 @@ const WarrantyPrint = forwardRef(({
         <thead>
           <tr>
             <th>Modeli</th>
-            <th>ImeI</th>
+            <th>IMEI</th>
             <th>Software Info</th>
             <th>Kohëzgjatja e garancionit</th>
           </tr>
