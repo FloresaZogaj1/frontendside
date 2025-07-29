@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   Box, Typography, TextField, Button, MenuItem, Paper, Alert, Select, FormControl, InputLabel
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // ✅ Shtuar për navigim
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/PFP-01__5_-removebg-preview.png";
+
+// API configs
+const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production.up.railway.app";
+const token = localStorage.getItem("token"); // Mos e parse me JSON.parse!
 
 function getTodayDate() {
   const today = new Date();
@@ -87,97 +91,34 @@ const kohezgjatjaOptions = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 const warrantyCSS = `
-  ..warranty-sheet {
-  font-family: 'Arial', sans-serif;
-  width: 630px; /* më e ngushtë, fletë A4 */
-  margin: 0 auto;
-  background: #fff;
-  color: #222;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 14px #0000000a;
-  padding: 28px 42px 28px 42px; /* më shumë hapësirë djathtas/majtas */
-}
-
-.warranty-logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.warranty-logo-row img { height: 52px; }
-.warranty-header {
-  text-align: center;
-  margin: 14px 0 18px 0;
-  font-size: 1.15rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-.warranty-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 0 38px;
-  margin-bottom: 12px;
-}
-.warranty-label {
-  font-weight: bold;
-  min-width: 100px;
-  display: inline-block;
-  margin-right: 3px;
-}
-.warranty-details-row { margin-bottom: 8px; font-size: 1rem; }
-.warranty-grid > div:last-child {
-  padding-right: 10px; /* HAPËSIRË ekstra te anët e djathta */
-}
-.warranty-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  margin-bottom: 16px;
-  font-size: 1rem;
-}
-.warranty-table th, .warranty-table td {
-  border: 1px solid #bfbfbf;
-  padding: 5px 7px;
-  text-align: center;
-}
-.warranty-table th { background: #f5f5f5; font-weight: bold; }
-.warranty-section-title { margin-top: 16px; font-size: 1.04rem; font-weight: 700; }
-.warranty-kushtet {
-  font-size: 0.97rem;
-  line-height: 1.7;
-  margin-bottom: 0;
-  margin-top: 10px;
-}
-.warranty-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 34px;
-  align-items: end;
-  font-size: 0.95rem;
-}
-.warranty-sign {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  min-width: 200px;
-}
-.warranty-sign-line {
-  border-bottom: 1.5px solid #222;
-  width: 140px;
-  margin-bottom: 2px;
-  margin-left: auto;
-}
-.warranty-sign-label {
-  font-size: 0.98rem;
-  color: #595959;
-  margin-right: 5px;
-  white-space: nowrap;
-}
-@media print {
-  body * { visibility: hidden; }
-  .warranty-sheet, .warranty-sheet * { visibility: visible !important; }
-  .warranty-sheet { position: absolute; left: 0; top: 0; width: 100vw !important; box-shadow: none; border: none; }
-}
+  .warranty-sheet {
+    font-family: 'Arial', sans-serif;
+    width: 630px;
+    margin: 0 auto;
+    background: #fff;
+    color: #222;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 14px #0000000a;
+    padding: 28px 42px 28px 42px;
+  }
+  .warranty-logo-row { display: flex; align-items: center; justify-content: space-between; }
+  .warranty-logo-row img { height: 52px; }
+  .warranty-header { text-align: center; margin: 14px 0 18px 0; font-size: 1.15rem; font-weight: bold; letter-spacing: 1px; }
+  .warranty-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0 38px; margin-bottom: 12px; }
+  .warranty-label { font-weight: bold; min-width: 100px; display: inline-block; margin-right: 3px; }
+  .warranty-details-row { margin-bottom: 8px; font-size: 1rem; }
+  .warranty-grid > div:last-child { padding-right: 10px; }
+  .warranty-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 16px; font-size: 1rem; }
+  .warranty-table th, .warranty-table td { border: 1px solid #bfbfbf; padding: 5px 7px; text-align: center; }
+  .warranty-table th { background: #f5f5f5; font-weight: bold; }
+  .warranty-section-title { margin-top: 16px; font-size: 1.04rem; font-weight: 700; }
+  .warranty-kushtet { font-size: 0.97rem; line-height: 1.7; margin-bottom: 0; margin-top: 10px; }
+  .warranty-footer { display: flex; justify-content: space-between; margin-top: 34px; align-items: end; font-size: 0.95rem; }
+  .warranty-sign { display: flex; flex-direction: column; align-items: flex-end; min-width: 200px; }
+  .warranty-sign-line { border-bottom: 1.5px solid #222; width: 140px; margin-bottom: 2px; margin-left: auto; }
+  .warranty-sign-label { font-size: 0.98rem; color: #595959; margin-right: 5px; white-space: nowrap; }
+  @media print { body * { visibility: hidden; } .warranty-sheet, .warranty-sheet * { visibility: visible !important; } .warranty-sheet { position: absolute; left: 0; top: 0; width: 100vw !important; box-shadow: none; border: none; } }
 `;
 
 const Warranty = () => {
@@ -200,15 +141,14 @@ const Warranty = () => {
   const [success, setSuccess] = useState("");
   const [showPrint, setShowPrint] = useState(false);
 
-  const navigate = useNavigate(); // ✅ Navigim për kontrollin e adminit
+  const navigate = useNavigate();
 
   useEffect(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || user.role !== "admin") {
-    navigate("/"); // ridrejto në home nëse s’është admin
-  }
-}, []);
-
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const validateIMEI = imei => /^\d{14}$/.test(imei);
   const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -216,20 +156,27 @@ const Warranty = () => {
   const requireContact = () =>
     (!!form.email && validateEmail(form.email)) || (!!form.telefoni && validatePhone(form.telefoni));
 
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
-    setSuccess("");
+  // Ruaj në databazë me status (printed/draft)
+  const saveWarranty = async (status) => {
+    try {
+      const res = await fetch(`${API_URL}/api/warranty`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({ ...form, status })
+      });
+      if (!res.ok) throw new Error("Gabim gjatë ruajtjes!");
+      return true;
+    } catch (err) {
+      setError("Gabim gjatë ruajtjes!");
+      return false;
+    }
   };
 
-  const handleMarkaChange = e => {
-    setForm({ ...form, marka: e.target.value, modeli: "", softInfo: "" });
-  };
-  const handleModeliChange = e => {
-    setForm({ ...form, modeli: e.target.value });
-  };
-
-  const handlePrint = () => {
+  // PRINTO & RUAJ në DB si printed
+  const handlePrint = async () => {
     if (!form.emri) return setError("Shkruani emrin.");
     if (!form.mbiemri) return setError("Shkruani mbiemrin.");
     if (!requireContact()) return setError("Vendosni një numër telefoni ose një email të vlefshëm.");
@@ -238,6 +185,8 @@ const Warranty = () => {
     if (!form.softInfo) return setError("Zgjidhni versionin e softuerit.");
     if (!form.kohezgjatja) return setError("Zgjidhni kohëzgjatjen e garancionit.");
     if (!form.cmimi) return setError("Shkruani çmimin.");
+    const ok = await saveWarranty("printed");
+    if (!ok) return;
     setShowPrint(true);
     setTimeout(() => {
       window.print();
@@ -245,10 +194,10 @@ const Warranty = () => {
     }, 350);
   };
 
-  // Draft ruhet në localStorage
-  const handleDraft = () => {
-    localStorage.setItem('warrantyDraft', JSON.stringify(form));
-    setSuccess("Drafti është ruajtur me sukses!");
+  // NË PRITJE & RUAJ në DB si draft
+  const handleDraft = async () => {
+    const ok = await saveWarranty("draft");
+    if (ok) setSuccess("Drafti është ruajtur me sukses!");
   };
 
   const modelet = form.marka ? deviceData[form.marka] : [];
@@ -264,14 +213,14 @@ const Warranty = () => {
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
-          <TextField label="Emri *" name="emri" value={form.emri} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
-          <TextField label="Mbiemri *" name="mbiemri" value={form.mbiemri} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
-          <TextField label="Numri i telefonit" name="telefoni" value={form.telefoni} onChange={handleChange} fullWidth sx={{ mb: 2 }} inputProps={{ inputMode: "numeric", pattern: "\\d{8,}" }} />
-          <TextField label="Email" name="email" value={form.email} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
+          <TextField label="Emri *" name="emri" value={form.emri} onChange={e => { setForm({ ...form, emri: e.target.value }); setError(""); setSuccess(""); }} fullWidth sx={{ mb: 2 }} />
+          <TextField label="Mbiemri *" name="mbiemri" value={form.mbiemri} onChange={e => { setForm({ ...form, mbiemri: e.target.value }); setError(""); setSuccess(""); }} fullWidth sx={{ mb: 2 }} />
+          <TextField label="Numri i telefonit" name="telefoni" value={form.telefoni} onChange={e => { setForm({ ...form, telefoni: e.target.value }); setError(""); setSuccess(""); }} fullWidth sx={{ mb: 2 }} inputProps={{ inputMode: "numeric", pattern: "\\d{8,}" }} />
+          <TextField label="Email" name="email" value={form.email} onChange={e => { setForm({ ...form, email: e.target.value }); setError(""); setSuccess(""); }} fullWidth sx={{ mb: 2 }} />
 
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Marka *</InputLabel>
-            <Select value={form.marka} name="marka" onChange={handleMarkaChange} label="Marka *">
+            <Select value={form.marka} name="marka" onChange={e => { setForm({ ...form, marka: e.target.value, modeli: "", softInfo: "" }); setError(""); setSuccess(""); }} label="Marka *">
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
               <MenuItem value="Apple">🍏 Apple</MenuItem>
               <MenuItem value="Samsung">📱 Samsung</MenuItem>
@@ -281,7 +230,7 @@ const Warranty = () => {
 
           <FormControl fullWidth sx={{ mb: 2 }} disabled={!form.marka}>
             <InputLabel>Modeli *</InputLabel>
-            <Select value={form.modeli} name="modeli" onChange={handleModeliChange} label="Modeli *">
+            <Select value={form.modeli} name="modeli" onChange={e => { setForm({ ...form, modeli: e.target.value }); setError(""); setSuccess(""); }} label="Modeli *">
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
               {modelet.map(modeli => (
                 <MenuItem key={modeli} value={modeli}>{modeli}</MenuItem>
@@ -293,7 +242,7 @@ const Warranty = () => {
             label="IMEI (14 shifra) *"
             name="imei"
             value={form.imei}
-            onChange={handleChange}
+            onChange={e => { setForm({ ...form, imei: e.target.value }); setError(""); setSuccess(""); }}
             fullWidth
             sx={{ mb: 2 }}
             inputProps={{ maxLength: 14, inputMode: "numeric", pattern: "\\d{14}" }}
@@ -302,7 +251,7 @@ const Warranty = () => {
 
           <FormControl fullWidth sx={{ mb: 2 }} disabled={!form.marka}>
             <InputLabel>Software Info *</InputLabel>
-            <Select value={form.softInfo} name="softInfo" onChange={handleChange} label="Software Info *">
+            <Select value={form.softInfo} name="softInfo" onChange={e => { setForm({ ...form, softInfo: e.target.value }); setError(""); setSuccess(""); }} label="Software Info *">
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
               {softwareOpts.map(sw => (
                 <MenuItem key={sw} value={sw}>{sw}</MenuItem>
@@ -312,7 +261,7 @@ const Warranty = () => {
 
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Kohëzgjatja e garancionit *</InputLabel>
-            <Select value={form.kohezgjatja} name="kohezgjatja" onChange={handleChange} label="Kohëzgjatja e garancionit *">
+            <Select value={form.kohezgjatja} name="kohezgjatja" onChange={e => { setForm({ ...form, kohezgjatja: e.target.value }); setError(""); setSuccess(""); }} label="Kohëzgjatja e garancionit *">
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
               {kohezgjatjaOptions.map(opt => (
                 <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
@@ -320,13 +269,13 @@ const Warranty = () => {
             </Select>
           </FormControl>
 
-          <TextField label="Çmimi (€) *" name="cmimi" value={form.cmimi} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
+          <TextField label="Çmimi (€) *" name="cmimi" value={form.cmimi} onChange={e => { setForm({ ...form, cmimi: e.target.value }); setError(""); setSuccess(""); }} fullWidth sx={{ mb: 2 }} />
           <TextField label="Data e fillimit të garancionit" name="data" value={form.data} fullWidth sx={{ mb: 2 }} InputProps={{ readOnly: true }} />
-          <TextField label="Komente" name="komente" value={form.komente} onChange={handleChange} fullWidth multiline rows={2} sx={{ mb: 2 }} />
+          <TextField label="Komente" name="komente" value={form.komente} onChange={e => { setForm({ ...form, komente: e.target.value }); setError(""); setSuccess(""); }} fullWidth multiline rows={2} sx={{ mb: 2 }} />
 
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Lloji i pagesës *</InputLabel>
-            <Select value={form.llojiPageses} name="llojiPageses" onChange={handleChange} label="Lloji i pagesës *">
+            <Select value={form.llojiPageses} name="llojiPageses" onChange={e => { setForm({ ...form, llojiPageses: e.target.value }); setError(""); setSuccess(""); }} label="Lloji i pagesës *">
               {llojetPageses.map(opt => (
                 <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
               ))}

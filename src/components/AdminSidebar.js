@@ -4,6 +4,8 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+
 
 const sidebarBg = "#fff";
 const sidebarAccent = "#FF7200";
@@ -14,11 +16,13 @@ const menu = [
   { label: "Produktet", icon: <InventoryIcon />, path: "/admin/products" },
   { label: "Përdoruesit", icon: <PeopleIcon />, path: "/admin/users" },
   { label: "Statistikat", icon: <BarChartIcon />, path: "/admin/stats" },
+  { label: "Garancionet", icon: <VerifiedUserIcon />, path: "/admin/warranty" }, // Shto këtë rresht
 ];
+
 
 function AdminSidebar() {
   const location = useLocation();
-  const userName = "Admin"; // ose merre nga state/context
+  const userName = "Admin"; 
 
   return (
     <Box

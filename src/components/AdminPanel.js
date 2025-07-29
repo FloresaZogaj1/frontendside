@@ -7,6 +7,7 @@ import AdminStats from "./AdminStats";
 import AdminProductsAdvanced from "./AdminProductsAdvanced";
 import AdminOrdersAdvanced from "./AdminOrdersAdvanced";
 import AdminStatsAdvanced from "./AdminStatsAdvanced";
+import AdminWarrantyPanel from "./AdminWarrantyPanel";
 
 export default function AdminPanel() {
   const [tab, setTab] = useState("products");
@@ -22,6 +23,9 @@ export default function AdminPanel() {
       {tab === "products" && <AdminProductsAdvanced />}
 {tab === "orders" && <AdminOrdersAdvanced />}
 {tab === "stats" && <AdminStatsAdvanced />}
+{tab === "warranty" && <AdminWarrantyPanel/>}
+
+
       </div>
     </div>
   );

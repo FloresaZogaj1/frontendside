@@ -40,7 +40,7 @@ import Kyqu from "./components/Kyqu";
 import Regjistrohu from "./components/Regjistrohu";
 import Profile from "./pages/Profile";
 import NoAccess from "./pages/NoAccess";
-
+import AdminWarrantyPanel from "./components/AdminWarrantyPanel";
 // Hook për ruajtjen e token-it në localStorage
 function TokenHandler() {
   const navigate = useNavigate();
@@ -114,6 +114,8 @@ function App() {
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="stats" element={<AdminStats />} />
+              <Route path="/admin/warranty" element={<AdminWarrantyPanel />} />
+
             </Route>
 
             {/* Route për warranty vetëm për admin */}
