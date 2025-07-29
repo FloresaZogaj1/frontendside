@@ -5,9 +5,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/PFP-01__5_-removebg-preview.png";
 
-// API configs
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production.up.railway.app";
-const token = localStorage.getItem("token"); // Mos e parse me JSON.parse!
+const token = localStorage.getItem("token");
 
 function getTodayDate() {
   const today = new Date();
@@ -140,8 +139,18 @@ const Warranty = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPrint, setShowPrint] = useState(false);
+  const [apiOnline, setApiOnline] = useState(true);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/admin/warranty/provemua`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.msg) setApiOnline(false);
+      })
+      .catch(() => setApiOnline(false));
+  }, []);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -156,10 +165,15 @@ const Warranty = () => {
   const requireContact = () =>
     (!!form.email && validateEmail(form.email)) || (!!form.telefoni && validatePhone(form.telefoni));
 
-  // Ruaj në databazë me status (printed/draft)
   const saveWarranty = async (status) => {
+    setError("");
+    setSuccess("");
+    if (!token) {
+      setError("Token i aksesit mungon! Kyqu si admin.");
+      return false;
+    }
     try {
-      const res = await fetch(`${API_URL}/api/warranty`, {
+      const res = await fetch(`${API_URL}/api/admin/warranty`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -167,15 +181,21 @@ const Warranty = () => {
         },
         body: JSON.stringify({ ...form, status })
       });
-      if (!res.ok) throw new Error("Gabim gjatë ruajtjes!");
+      if (!res.ok) {
+        let errorMsg = "Gabim gjatë ruajtjes!";
+        try {
+          const data = await res.json();
+          if (data && data.msg) errorMsg = data.msg;
+        } catch (_) { }
+        throw new Error(errorMsg);
+      }
       return true;
     } catch (err) {
-      setError("Gabim gjatë ruajtjes!");
+      setError(err.message || "Gabim gjatë ruajtjes!");
       return false;
     }
   };
 
-  // PRINTO & RUAJ në DB si printed
   const handlePrint = async () => {
     if (!form.emri) return setError("Shkruani emrin.");
     if (!form.mbiemri) return setError("Shkruani mbiemrin.");
@@ -194,7 +214,6 @@ const Warranty = () => {
     }, 350);
   };
 
-  // NË PRITJE & RUAJ në DB si draft
   const handleDraft = async () => {
     const ok = await saveWarranty("draft");
     if (ok) setSuccess("Drafti është ruajtur me sukses!");
@@ -210,6 +229,12 @@ const Warranty = () => {
           Fletë Garancioni
         </Typography>
         <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
+          {!apiOnline && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              Backend-i i garancionit <b>Nuk është Online</b>.<br />
+              Kontrollo deploy-in ose radhitjen e route-ve në backend!
+            </Alert>
+          )}
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
@@ -304,7 +329,6 @@ const Warranty = () => {
           </Box>
         </Paper>
       </Box>
-      {/* PRINT FLETË GARANCIONI */}
       {showPrint && (
         <div style={{ display: "block" }}>
           <style>{warrantyCSS}</style>
