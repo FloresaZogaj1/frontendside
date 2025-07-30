@@ -3,7 +3,7 @@ import {
   Box, Typography, TextField, Button, MenuItem, Paper, Alert, Select, FormControl, InputLabel
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/PFP-01__5_-removebg-preview.png";
+import logo from "../assets/top-mobile copy.png";
 
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production.up.railway.app";
 const token = localStorage.getItem("token");
@@ -92,33 +92,56 @@ const kohezgjatjaOptions = Array.from({ length: 24 }, (_, i) => ({
 const warrantyCSS = `
   .warranty-sheet {
     font-family: 'Arial', sans-serif;
-    width: 630px;
+    width: 99vw;
+    max-width: 510px;
     margin: 0 auto;
     background: #fff;
     color: #222;
     border-radius: 12px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 14px #0000000a;
-    padding: 28px 42px 28px 42px;
+    padding: 14px 12px 18px 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
   .warranty-logo-row { display: flex; align-items: center; justify-content: space-between; }
-  .warranty-logo-row img { height: 52px; }
-  .warranty-header { text-align: center; margin: 14px 0 18px 0; font-size: 1.15rem; font-weight: bold; letter-spacing: 1px; }
-  .warranty-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0 38px; margin-bottom: 12px; }
-  .warranty-label { font-weight: bold; min-width: 100px; display: inline-block; margin-right: 3px; }
-  .warranty-details-row { margin-bottom: 8px; font-size: 1rem; }
-  .warranty-grid > div:last-child { padding-right: 10px; }
-  .warranty-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 16px; font-size: 1rem; }
-  .warranty-table th, .warranty-table td { border: 1px solid #bfbfbf; padding: 5px 7px; text-align: center; }
+  .warranty-logo-row img { height: 38px; }
+  .warranty-header { text-align: center; margin: 7px 0 8px 0; font-size: 1.01rem; font-weight: bold; letter-spacing: 0.5px; }
+  .warranty-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0 10px; margin-bottom: 7px; }
+  .warranty-label { font-weight: bold; min-width: 70px; display: inline-block; margin-right: 2px; }
+  .warranty-details-row { margin-bottom: 2px; font-size: 0.97rem; overflow-wrap: break-word; word-break: break-word; }
+  .warranty-table { width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 8px; font-size: 0.92rem; table-layout: fixed; }
+  .warranty-table th, .warranty-table td { border: 1px solid #bfbfbf; padding: 3px 3px; text-align: center; overflow-wrap: break-word; word-break: break-word; }
   .warranty-table th { background: #f5f5f5; font-weight: bold; }
-  .warranty-section-title { margin-top: 16px; font-size: 1.04rem; font-weight: 700; }
-  .warranty-kushtet { font-size: 0.97rem; line-height: 1.7; margin-bottom: 0; margin-top: 10px; }
-  .warranty-footer { display: flex; justify-content: space-between; margin-top: 34px; align-items: end; font-size: 0.95rem; }
-  .warranty-sign { display: flex; flex-direction: column; align-items: flex-end; min-width: 200px; }
-  .warranty-sign-line { border-bottom: 1.5px solid #222; width: 140px; margin-bottom: 2px; margin-left: auto; }
-  .warranty-sign-label { font-size: 0.98rem; color: #595959; margin-right: 5px; white-space: nowrap; }
-  @media print { body * { visibility: hidden; } .warranty-sheet, .warranty-sheet * { visibility: visible !important; } .warranty-sheet { position: absolute; left: 0; top: 0; width: 100vw !important; box-shadow: none; border: none; } }
+  .warranty-section-title { margin-top: 7px; font-size: 0.98rem; font-weight: 700; }
+  .warranty-kushtet { font-size: 0.87rem; line-height: 1.48; margin-bottom: 0; margin-top: 6px; overflow-wrap: break-word; word-break: break-word; }
+  .warranty-footer { display: flex; justify-content: space-between; margin-top: 14px; align-items: end; font-size: 0.89rem; gap: 10px;}
+  .warranty-sign { display: flex; flex-direction: column; align-items: flex-end; min-width: 105px; }
+  .warranty-sign-line { border-bottom: 1.1px solid #222; width: 95px; margin-bottom: 2px; margin-left: auto; }
+  .warranty-sign-label { font-size: 0.90rem; color: #595959; margin-right: 2px; white-space: nowrap; }
+
+  @media print {
+    body * { visibility: hidden; }
+    .warranty-sheet, .warranty-sheet * { visibility: visible !important; }
+    .warranty-sheet {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100vw !important;
+      max-width: 93vw !important;
+      min-width: unset !important;
+      padding: 6px 1vw 8px 1vw !important;
+      box-shadow: none;
+      border: none;
+      font-size: 0.87rem !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+    }
+    .warranty-footer { font-size: 0.86rem !important; }
+    .warranty-table th, .warranty-table td { font-size: 0.87rem !important; }
+    .warranty-kushtet { font-size: 0.84rem !important; }
+  }
 `;
+
 
 const Warranty = () => {
   const [form, setForm] = useState({
