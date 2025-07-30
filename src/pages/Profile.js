@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL || "https://backendd-t-production.up.railway.app";
 
 function Profile() {
   const [profile, setProfile] = useState(null);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -13,12 +14,17 @@ function Profile() {
         Authorization: `Bearer ${token}`
       }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
       .then(data => setProfile(data))
-      .catch(() => setError("Gabim gjatë marrjes së profilit"));
-  }, []);
+      .catch(() => {
+        // Ridrejto në ballinë nëse ndodh ndonjë gabim
+        navigate("/");
+      });
+  }, [navigate]);
 
-  if (error) return <div>{error}</div>;
   if (!profile) return <div>Loading...</div>;
 
   return (
