@@ -485,7 +485,7 @@ const Warranty = () => {
     setSuccess("");
     
     try {
-      await api.post("/warranty/from-form", form);
+      await api.post("/api/warranty/from-form", form);
       
       // Create print content
       const printContent = createPrintHTML(form);

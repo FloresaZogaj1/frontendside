@@ -92,7 +92,7 @@ export default function AdminProducts() {
 
   const refresh = async () => {
     try {
-      const { data } = await api.get(`/products`); // Hequr /api prefix
+      const { data } = await api.get(`/api/products`); // backend në production ka /api prefix
       setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading products:', error);
@@ -105,7 +105,7 @@ export default function AdminProducts() {
   const uploadImage = async (file) => {
     const fd = new FormData();
     fd.append("image", file);
-    const { data } = await api.post(`/products/upload-image`, fd); // Hequr /api prefix
+    const { data } = await api.post(`/api/products/upload-image`, fd); // backend në production ka /api prefix
     return data.url;
   };
 
@@ -115,7 +115,7 @@ export default function AdminProducts() {
       let imageUrl = form.image?.trim() || "";
       if (!imageUrl && localFile) imageUrl = await uploadImage(localFile);
 
-      await api.post(`/products`, { // Hequr /api prefix
+      await api.post(`/api/products`, { // backend në production ka /api prefix
         name: form.name,
         price: parseFloat(form.price),
         description: form.description || "",
@@ -132,7 +132,7 @@ export default function AdminProducts() {
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/products/${deleteId}`); // Hequr /api prefix
+      await api.delete(`/api/products/${deleteId}`); // backend në production ka /api prefix
       setDeleteId(null);
       refresh();
     } catch (err) {
@@ -158,7 +158,7 @@ export default function AdminProducts() {
       let imageUrl = editProduct.image?.trim() || "";
       if (editLocalFile) imageUrl = await uploadImage(editLocalFile);
 
-      await api.put(`/products/${editProduct.id}`, { // Hequr /api prefix
+      await api.put(`/api/products/${editProduct.id}`, { // backend në production ka /api prefix
         name: editProduct.name,
         price: parseFloat(editProduct.price),
         description: editProduct.description || "",
