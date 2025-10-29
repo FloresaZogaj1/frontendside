@@ -27,7 +27,7 @@ export default function AdminCustomerWarranties() {
 
   const load = async () => {
     try {
-      const { data } = await api.get(`/warranty`); // baseURL është tashmë https://api.topmobile.store
+      const { data } = await api.get(`/api/warranty`); // backend në production ka /api prefix
       setRows(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading warranties:', error);

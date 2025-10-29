@@ -31,7 +31,7 @@ export default function AdminUsers() {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await api.get(`/admin/users`); // baseURL është tashmë https://api.topmobile.store
+        const { data } = await api.get(`/api/admin/users`); // backend në production ka /api prefix
         if (alive) setUsers(Array.isArray(data) ? data : []);
       } catch (e) {
         if (alive) {
