@@ -9,7 +9,7 @@ export default function AdminOrders() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await api.get(`/api/admin/orders`);
+        const { data } = await api.get(`/admin/orders`);
         setOrders(Array.isArray(data) ? data : []);
       } catch {
         setOrders([]);
@@ -20,7 +20,7 @@ export default function AdminOrders() {
   const handleStatusChange = async (id, newStatus) => {
     setChangingId(id);
     try {
-      await api.put(`/api/admin/orders/${id}/status`, { status: newStatus });
+      await api.put(`/admin/orders/${id}/status`, { status: newStatus });
       setOrders(prev => prev.map(o => (o.id === id ? { ...o, status: newStatus } : o)));
     } finally {
       setChangingId(null);
@@ -29,7 +29,7 @@ export default function AdminOrders() {
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/api/admin/orders/${deleteId}`);
+      await api.delete(`/admin/orders/${deleteId}`);
       setOrders(prev => prev.filter(o => o.id !== deleteId));
     } finally {
       setDeleteId(null);

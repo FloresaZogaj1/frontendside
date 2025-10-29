@@ -197,7 +197,7 @@ export default function Mirembajtja() {
         date: form.data,
       };
 
-      const { data: json } = await api.post("/api/contracts/softsave", payload);
+      const { data: json } = await api.post("/contracts/softsave", payload);
 
       setContractNo(json.contract_no);
       setShowPrint(true);

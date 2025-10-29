@@ -24,7 +24,7 @@ export default function AdminStats() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await api.get(`/api/admin/stats`); // production backend ka /api prefix
+        const { data } = await api.get(`/admin/stats`); // baseURL është tashmë https://api.topmobile.store
         setStats(data || {});
       } catch {
         setStats({});

@@ -27,7 +27,7 @@ export default function AdminKontratat() {
     const load = async () => {
       try {
         setLoading(true); setErr("");
-        const { data } = await api.get("/api/contracts/softsave"); // production backend ka /api prefix
+        const { data } = await api.get("/contracts/softsave"); // baseURL është tashmë https://api.topmobile.store
         const dataArray = Array.isArray(data) ? data : (data.rows || data.data || []);
         setRows(dataArray);
       } catch (e) {
