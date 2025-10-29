@@ -8,13 +8,13 @@ import logo from "../assets/PFP-01__5_-removebg-preview.png";
 import { api } from "../api"; // axios instance me baseURL dhe Authorization interceptor
 import { useAuth } from "../AuthContext";
 
-// Marrim datën në format DD.MM.YYYY
+// Marrim datën në format YYYY-MM-DD për MySQL
 const getTodayDate = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const year = today.getFullYear();
-  return `${day}.${month}.${year}`;
+  return `${year}-${month}-${day}`;
 };
 
 // Të dhënat e pajisjeve dhe versionet e softuerit
