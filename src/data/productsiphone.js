@@ -2,17 +2,20 @@ import foto11 from "../assets/a0c2a517-ca1d-4129-9f3f-e69f131cd94a_size3840_crop
 import foto8 from "../assets/iphone-13-png--0b6bc714e9404b74a0c8-removebg-preview.png";
 import foto12 from "../assets/Remove-bg.ai_1725099301061-800x800-removebg-preview.png";
 import foto20 from "../assets/apple-iphone-11-pro-max-512gb-green-removebg-preview.png";
+import foto30 from "../assets/hq720-removebg-preview.png";
+import foto31 from "../assets/XiCVxSaNCrdsgWroSHh9dg-removebg-preview.png"
+import set1 from "../assets/download-removebg-preview.png"
 
 const iphoneProducts = [
   {
     id: "iphone-15-pro-max",
     name: "iPhone 15 Pro Max",
-    description: "Apple iPhone 15 Pro Max, 256GB, Blue Titanium.",
-    price: 1290,
-    oldPrice: 1399,
+    description: "Apple iPhone 15 Pro Max, 256GB.",
+    price: 940,
+    oldPrice: 990,
     images: [
-      "https://m.media-amazon.com/images/I/71yzJoE7WlL._AC_SY741_.jpg",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-15-pro-max-1.jpg"
+      foto30
+      
     ],
     brand: "Apple",
     sku: "IP15PM256BLT",
@@ -38,11 +41,10 @@ const iphoneProducts = [
     id: "iphone-15-pro",
     name: "iPhone 15 Pro",
     description: "Apple iPhone 15 Pro, 128GB, Titanium.",
-    price: 1249,
-    oldPrice: 1349,
+    price: 800,
+    oldPrice: 850,
     images: [
-      "https://m.media-amazon.com/images/I/71v2jVh6nIL._AC_SY741_.jpg",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-15-pro-1.jpg"
+foto31      
     ],
     brand: "Apple",
     sku: "IP15P128TI",
@@ -68,11 +70,11 @@ const iphoneProducts = [
     id: "iphone-15-plus",
     name: "iPhone 15 Plus",
     description: "Apple iPhone 15 Plus, 128GB, Pink.",
-    price: 1149,
-    oldPrice: 1249,
+    price: 699,
+    oldPrice: 749,
     images: [
-      "https://www.reviews.org/app/uploads/2025/03/Pixel_9a_model-removebg-preview-300x300.webp",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-15-plus-1.jpg"
+      "https://www.reviews.org/app/uploads/2025/03/Pixel_9a_model-removebg-preview-300x300.webp"
+     
     ],
     brand: "Apple",
     sku: "IP15P128PI",
@@ -98,8 +100,8 @@ const iphoneProducts = [
     id: "iphone-14-pro-max",
     name: "iPhone 14 Pro Max",
     description: "Apple iPhone 14 Pro Max, 256GB, Purple.",
-    price: 1149,
-    oldPrice: 1249,
+    price: 645,
+    oldPrice: 695,
     images: [
       foto8,
       "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-14-pro-max-2.jpg"
@@ -128,11 +130,11 @@ const iphoneProducts = [
     id: "iphone-14",
     name: "iPhone 14",
     description: "Apple iPhone 14, 128GB, Blue.",
-    price: 849,
-    oldPrice: 949,
+    price: 499,
+    oldPrice: 549,
     images: [
-      "https://www.pngplay.com/wp-content/uploads/15/iPhone-14-PNG-Free-File-Download.png",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-14-1.jpg"
+      "https://www.pngplay.com/wp-content/uploads/15/iPhone-14-PNG-Free-File-Download.png"
+      
     ],
     brand: "Apple",
     sku: "IP14128BL",
@@ -158,11 +160,11 @@ const iphoneProducts = [
     id: "iphone-13-pro",
     name: "iPhone 13 Pro",
     description: "Apple iPhone 13 Pro, 128GB, Graphite.",
-    price: 949,
-    oldPrice: 1099,
+    price: 379,
+    oldPrice: 429,
     images: [
-      "https://thephonepreneur.com/wp-content/uploads/2025/03/Apple_iPhone-13-Pro_iPhone-13-Pro-max-removebg-preview.png",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-pro-1.jpg"
+      "https://thephonepreneur.com/wp-content/uploads/2025/03/Apple_iPhone-13-Pro_iPhone-13-Pro-max-removebg-preview.png"
+      
     ],
     brand: "Apple",
     sku: "IP13P128GR",
@@ -217,11 +219,11 @@ const iphoneProducts = [
     id: "iphone-13",
     name: "iPhone 13",
     description: "Apple iPhone 13, 128GB, Blue.",
-    price: 799,
-    oldPrice: 879,
+    price: 289,
+    oldPrice: 339,
     images: [
-      foto8,
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-01.jpg"
+      foto8
+      
     ],
     brand: "Apple",
     sku: "IP13128BL",
@@ -247,11 +249,11 @@ const iphoneProducts = [
     id: "iphone-13-mini",
     name: "iPhone 13 Mini",
     description: "Apple iPhone 13 Mini, 128GB, Starlight.",
-    price: 749,
-    oldPrice: 849,
+    price: 270,
+    oldPrice: 320,
     images: [
-      foto11,
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-mini-1.jpg"
+      foto11
+      
     ],
     brand: "Apple",
     sku: "IP13M128ST",
@@ -277,11 +279,10 @@ const iphoneProducts = [
     id: "iphone-12-pro-max",
     name: "iPhone 12 Pro Max",
     description: "Apple iPhone 12 Pro Max, 256GB, Gold.",
-    price: 899,
-    oldPrice: 999,
+    price: 379,
+    oldPrice: 449,
     images: [
-      "https://sopiguard.com/cdn/shop/products/ip12pro3mbrgun.jpg?v=1603171476",
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-12-pro-max-1.jpg"
+set1      
     ],
     brand: "Apple",
     sku: "IP12PM256GD",
@@ -307,11 +308,11 @@ const iphoneProducts = [
     id: "iphone-12",
     name: "iPhone 12",
     description: "Apple iPhone 12, 128GB, White.",
-    price: 679,
-    oldPrice: 749,
+    price: 269,
+    oldPrice: 329,
     images: [
-      foto12,
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-12-1.jpg"
+      foto12
+      
     ],
     brand: "Apple",
     sku: "IP12128WH",
@@ -337,11 +338,11 @@ const iphoneProducts = [
     id: "iphone-11",
     name: "iPhone 11",
     description: "Apple iPhone 11, 128GB, Green.",
-    price: 549,
-    oldPrice: 609,
+    price: 229,
+    oldPrice: 269,
     images: [
-      foto20,
-      "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-11-1.jpg"
+      foto20
+     
     ],
     brand: "Apple",
     sku: "IP11128GR",

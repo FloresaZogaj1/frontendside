@@ -1,237 +1,390 @@
-import React from "react";
-import { useParams, Link } from "react-router-dom";
-import ALL_PRODUCTS from "../data/allProducts";
-import { useCart } from "../CartContext"; // <- Shto këtë
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import ALL_PRODUCTS from "../data/products.index";
+import { useCart } from "../CartContext";
+import SEO from "../seo/SEO";
+import { Button } from "@mui/material";
+import { openWhatsApp } from "../utils/whatsapp";   // ⬅️ ndryshimi këtu
+import { productSlug, norm } from "../utils/productSlug";
+import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import "./ProductDetails.css";
 
-// Përkthimet e kategorive për breadcrumb
 const categoryNames = {
   phone: "Telefona",
   accessory: "Aksesorë",
+  accessories: "Aksesorë",
   case: "Mbrojtëse",
   giftcard: "Gift Card",
   samsung: "Samsung",
-  iphone: "iPhone"
-  // Shto më shumë nëse ke kategori të tjera
+  iphone: "iPhone",
+  fujifilm: "Fujifilm / Instax",
 };
 
-const ProductDetails = () => {
-  const { id } = useParams();
-  const { addToCart } = useCart(); // <- Shto këtë
+const DEFAULT_IMG = "/default-product.jpg";
 
-  // Gjej produktin sipas id-së (pa dallim të madhësisë së shkronjave)
-  const product = ALL_PRODUCTS.find(
-    (p) => p.id && p.id.toLowerCase() === id.toLowerCase()
+/* -------------------- VARIANTS (vetëm për Instax Mini 12) -------------------- */
+const COLOR_META = {
+  "pastel-blue":  { label: "Pastel Blue",  hex: "#86bdf0" },
+  "blossom-pink": { label: "Blossom Pink", hex: "#ff9dbb" },
+  "mint-green":   { label: "Mint Green",   hex: "#8fd6b9" },
+  "clay-white":   { label: "Clay White",   hex: "#e9e6e1", ring: "#bbb" },
+  "lilac-purple": { label: "Lilac Purple", hex: "#b9a1e0" },
+};
+const MINI12_COLOR_LABEL = {
+  "pastel-blue":  "Pastel Blue",
+  "mint-green":   "Mint Green",
+  "blossom-pink": "Blossom Pink",
+  "clay-white":   "Clay White",
+  "lilac-purple": "Lilac Purple",
+};
+const COLOR_TOKENS = Object.keys(COLOR_META);
+
+const getColorTokenFromSlug = (slug = "") =>
+  COLOR_TOKENS.find((t) => slug.includes(t)) || null;
+
+// p.sh. instax-mini-12-pastel-blue-bundle-box -> instax-mini-12-bundle-box
+const getVariantGroupKey = (slug = "") => {
+  const token = getColorTokenFromSlug(slug);
+  if (!token) return null;
+  let key = slug.replace(`-${token}-`, "-");
+  key = key.replace(`-${token}`, "");
+  key = key.replace(`${token}-`, "");
+  return key.replace(/--+/g, "-");
+};
+/* --------------------------------------------------------------------------- */
+
+/* ----------------------------- SPEC HELPERS -------------------------------- */
+const normalizeSpecs = (specs) => {
+  if (!specs) return [];
+  if (Array.isArray(specs)) {
+    return specs
+      .map((it) => {
+        if (Array.isArray(it)) return { k: String(it[0]), v: String(it[1]) };
+        if (it && typeof it === "object") return { k: String(it.k || it.key), v: String(it.v || it.value) };
+        return null;
+      })
+      .filter(Boolean);
+  }
+  if (typeof specs === "object") {
+    return Object.entries(specs).map(([k, v]) => ({
+      k: String(k),
+      v: Array.isArray(v) ? v.join(", ") : String(v),
+    }));
+  }
+  return [];
+};
+/* --------------------------------------------------------------------------- */
+
+// Gjej produktin sipas path param (slug/id/emër i normalizuar)
+const useFindProduct = (routeId) => {
+  return useMemo(() => {
+    const pid = norm(String(routeId || ""));
+    const found = (ALL_PRODUCTS || []).find((p) => {
+      const nId = norm(p?.id);
+      const nSlug = norm(p?.slug);
+      const nName = norm(p?.name);
+      return pid === nId || pid === nSlug || pid === nName;
+    });
+    return found || null;
+  }, [routeId]);
+};
+
+function ProductDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+
+  const product = useFindProduct(id);
+
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const images = useMemo(() => {
+    if (!product) return [];
+    const arr = Array.isArray(product.images) ? product.images : [product.images].filter(Boolean);
+    return arr.length ? arr : [DEFAULT_IMG];
+  }, [product]);
+
+  const activeImg = images[activeIdx] || DEFAULT_IMG;
+
+  const onKey = useCallback(
+    (e) => {
+      if (!images.length) return;
+      if (e.key === "ArrowRight" || e.key === "2") setActiveIdx((i) => (i + 1) % images.length);
+      else if (e.key === "ArrowLeft" || e.key === "1") setActiveIdx((i) => (i - 1 + images.length) % images.length);
+    },
+    [images.length]
   );
 
-  if (!product)
-    return (
-      <div style={{ padding: 40, fontSize: 22, color: "#c00" }}>
-        Produkt jo i gjetur
-      </div>
-    );
+  useEffect(() => {
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onKey]);
+
+  // ---- gjëra të sigurta PARA çdo return (pa hooks të rinj) ----
+  const category = (product?.category || "").toLowerCase();
+  const categoryLabel =
+    categoryNames[category] ||
+    (category ? category.charAt(0).toUpperCase() + category.slice(1) : "Kategori");
+
+  const hasOld = !!(product && product.oldPrice && product.oldPrice > product.price);
+  const inStock = !!(product && product.inStock !== false && (product.stock === undefined || product.stock > 0));
+
+  // SPEC-et (hook para return)
+  const specs = useMemo(() => {
+    if (!product) return [];
+    const base = normalizeSpecs(product.specs);
+    if (base.length) return base;
+
+    const fallback = [];
+    if (product.brand) fallback.push({ k: "Brand", v: String(product.brand) });
+    if (categoryLabel) fallback.push({ k: "Kategori", v: String(categoryLabel) });
+    if (product.sku) fallback.push({ k: "SKU", v: String(product.sku) });
+    fallback.push({ k: "Disponueshmëria", v: inStock ? "Në stok" : "Jashtë stokut" });
+    if (product.price !== undefined) fallback.push({ k: "Çmimi", v: `€${product.price}` });
+    return fallback;
+  }, [product, categoryLabel, inStock]);
+
+  if (!product) {
+    return <div className="pd-notfound">Produkt jo i gjetur</div>;
+  }
+
+  // ---- SEO & URL ----
+  const slugOrId = productSlug(product);
+  const productPath = `/products/${slugOrId}`;
+  const productUrl = `https://topmobile.store${productPath}`;
+  const pageUrl = typeof window !== "undefined" ? window.location.href : productUrl;
+
+  // ---- JSON-LD ----
+  const additionalProperty = specs.map(({ k, v }) => ({
+    "@type": "PropertyValue",
+    name: k,
+    value: v,
+  }));
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://topmobile.store/" },
+      { "@type": "ListItem", position: 2, name: "Produktet", item: "https://topmobile.store/products" },
+      ...(category
+        ? [{ "@type": "ListItem", position: 3, name: categoryLabel, item: `https://topmobile.store/category/${category}` }]
+        : []),
+      { "@type": "ListItem", position: category ? 4 : 3, name: product.name, item: productUrl },
+    ],
+  };
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || "",
+    image: images.length ? images : ["https://topmobile.store/og-image.jpg"],
+    sku: product.sku || undefined,
+    brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+    additionalProperty,
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "EUR",
+      price: String(product.price ?? ""),
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+    },
+  };
+
+  /* ---------------- VARIANTET / SWATCHES — vetëm për Fujifilm Mini 12 ---------------- */
+  const isFujifilmMini12 =
+    category === "fujifilm" && String(product.slug || "").toLowerCase().includes("instax-mini-12");
+
+  let variantSiblings = [];
+  let activeColorMeta = null;
+
+  if (isFujifilmMini12) {
+    const activeSlug = String(product.slug || "").toLowerCase();
+    const activeColorToken = getColorTokenFromSlug(activeSlug);
+    const variantGroupKey = getVariantGroupKey(activeSlug);
+
+    variantSiblings = (ALL_PRODUCTS || []).filter((p) => {
+      const s = String(p.slug || "").toLowerCase();
+      return getVariantGroupKey(s) === variantGroupKey;
+    });
+
+    activeColorMeta = COLOR_META[activeColorToken] || null;
+  }
+
+  // ---- TITULLI dinamik për Mini 12 ----
+  const activeSlugLower = String(product.slug || "").toLowerCase();
+  const activeTok = getColorTokenFromSlug(activeSlugLower);
+  const colorLabel = MINI12_COLOR_LABEL[activeTok] || null;
+  const displayTitle = isFujifilmMini12
+    ? `Instax Mini 12${colorLabel ? ` — ${colorLabel}` : ""}${activeSlugLower.includes("bundle-box") ? " (Bundle)" : ""}`
+    : product.name;
 
   return (
-    <div style={{ maxWidth: 1300, margin: "auto", padding: 40 }}>
-      {/* -------- Breadcrumb --------- */}
-      <div style={{ color: "#8b98ad", marginBottom: 18, fontSize: 15 }}>
-        <Link to="/" style={{ color: "#b5bfd2", textDecoration: "none" }}>
-          Home
-        </Link>
-        {" > "}
-        <Link
-          to={`/${product.category}`}
-          style={{ color: "#b5bfd2", textDecoration: "none" }}
-        >
-          {categoryNames[product.category] ||
-            product.category.charAt(0).toUpperCase() +
-              product.category.slice(1)}
-        </Link>
-        {" > "}
-        <span style={{ color: "#415077" }}>{product.name}</span>
-      </div>
+    <div className="pd-page">
+      <SEO
+        title={displayTitle}
+        description={product.description || "Detaje produkti nga Top Mobile."}
+        url={productUrl}
+        image={activeImg}
+      />
+      <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+      <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
 
-      <div style={{ display: "flex", gap: 54, flexWrap: "wrap" }}>
-        {/* ------- Galeri imazhesh ------- */}
-        <div>
-          <img
-            src={
-              Array.isArray(product.images) ? product.images[0] : product.images
-            }
-            alt={product.name}
-            style={{
-              width: 360,
-              maxWidth: "98vw",
-              borderRadius: 16,
-              marginBottom: 14
-            }}
-          />
-          <div style={{ display: "flex", gap: 10 }}>
-            {product.images &&
-              product.images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`${product.name} ${idx + 1}`}
-                  style={{
-                    width: 65,
-                    height: 65,
-                    objectFit: "cover",
-                    borderRadius: 10,
-                    border: "1px solid #eee",
-                    cursor: "pointer"
-                  }}
-                />
+      {/* Breadcrumb */}
+      <nav className="pd-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/" className="pd-link">Home</Link>
+        <span className="pd-sep"> / </span>
+        <Link to="/products" className="pd-link">Produktet</Link>
+        {category && (
+          <>
+            <span className="pd-sep"> / </span>
+            <Link to={`/category/${(product.category || "").toLowerCase()}`} className="pd-link">
+              {categoryLabel}
+            </Link>
+          </>
+        )}
+        <span className="pd-sep"> / </span>
+        <span className="pd-current" aria-current="page">{displayTitle}</span>
+      </nav>
+
+      {/* Layout */}
+      <div className="pd-grid">
+        <section className="pd-gallery">
+          <div className="pd-hero" role="img" aria-label={`Foto e produktit: ${displayTitle}`}>
+            <img
+              src={activeImg}
+              alt={displayTitle}
+              className="pd-hero-img"
+              loading="eager"
+              onError={(e) => (e.currentTarget.src = DEFAULT_IMG)}
+            />
+          </div>
+
+          {images.length > 1 && (
+            <div className="pd-thumbs" role="tablist" aria-label="Galeria e fotove">
+              {images.map((src, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIdx(i)}
+                  aria-label={`Foto ${i + 1}`}
+                  aria-selected={i === activeIdx}
+                  role="tab"
+                  className={`pd-thumb ${i === activeIdx ? "is-active" : ""}`}
+                >
+                  <img
+                    src={src}
+                    alt={`Foto ${i + 1}`}
+                    className="pd-thumb-img"
+                    loading="lazy"
+                    onError={(e) => (e.currentTarget.src = DEFAULT_IMG)}
+                  />
+                </button>
               ))}
+            </div>
+          )}
+        </section>
+
+        <aside className="pd-info">
+          <h1 className="pd-title">{displayTitle}</h1>
+
+          {/* Swatches (vetëm për Fujifilm Mini 12) */}
+          {isFujifilmMini12 && variantSiblings.length > 1 && (
+            <div className="pd-variants">
+              <div className="pd-variants-label">
+                Ngjyra{activeColorMeta ? `: ${activeColorMeta.label}` : "" }
+              </div>
+              <div className="pd-swatches" role="tablist" aria-label="Zgjidh ngjyrën">
+                {variantSiblings.map((v) => {
+                  const s = String(v.slug || "").toLowerCase();
+                  const tok = getColorTokenFromSlug(s);
+                  const meta = COLOR_META[tok] || { label: tok || "Ngjyrë", hex: "#999" };
+                  const isActive = s === String(product.slug || "").toLowerCase();
+
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      title={meta.label}
+                      className={`pd-swatch ${isActive ? "is-active" : ""}`}
+                      style={{ "--swatch": meta.hex, "--ring": meta.ring || "transparent" }}
+                      onClick={() => !isActive && navigate(`/products/${v.slug}`)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {product.description && <div className="pd-desc">{product.description}</div>}
+
+          <div className="pd-price-row">
+            {hasOld && <span className="pd-old">€{product.oldPrice}</span>}
+            {product.price !== undefined && <span className="pd-price">€{product.price}</span>}
+            <span className={`pd-stock ${inStock ? "in" : "out"}`} aria-live="polite">
+              {inStock ? "Në stok" : "Jashtë stokut"}
+            </span>
           </div>
-        </div>
-        {/* -------- Info & blerje -------- */}
-        <div style={{ flex: 1 }}>
-          <h1
-            style={{
-              color: "#434a62",
-              fontWeight: 700,
-              margin: 0,
-              fontSize: 38
-            }}
-          >
-            {product.name}
-          </h1>
-          <div style={{ margin: "8px 0 22px 0", fontSize: 18, color: "#6c7a92" }}>
-            {product.description}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 20,
-              marginBottom: 14
-            }}
-          >
-            <span
-              style={{
-                fontWeight: 700,
-                fontSize: 32,
-                color: "#ff8000"
+
+          {/* CTA */}
+          <div className="pd-actions">
+            {/* Shporta: vetëm ikonë, blu, rrethor */}
+            <Button
+              variant="contained"
+              onClick={() => addToCart(product)}
+              className="pd-add-btn"
+              aria-label="Shto në shportë"
+              title="Shto në shportë"
+            >
+              <ShoppingCartRoundedIcon fontSize="medium" />
+            </Button>
+
+            {/* WhatsApp: ikonë + tekst */}
+            <Button
+              variant="contained"
+              className="pd-wa-btn"
+              aria-label="Porosit në WhatsApp"
+              title="Porosit në WhatsApp"
+              startIcon={<WhatsAppIcon />}
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsApp(product, pageUrl);
               }}
             >
-              €{product.price}
-            </span>
-            {product.oldPrice && product.oldPrice > product.price && (
-              <span
-                style={{
-                  color: "#bbc",
-                  textDecoration: "line-through",
-                  fontSize: 20
-                }}
-              >
-                €{product.oldPrice}
-              </span>
-            )}
+              Porosit
+            </Button>
           </div>
-          <div style={{ marginBottom: 8 }}>
-            <span style={{ color: "#8b98ad" }}>Prodhuesi: </span>
-            <span style={{ color: "#263f5b" }}>{product.brand || "—"}</span>
-            {"  "}
-            <span style={{ marginLeft: 24, color: "#8b98ad" }}>SKU: </span>
-            <span style={{ color: "#263f5b" }}>{product.sku || "—"}</span>
-          </div>
-          {/* Rating */}
-          <div style={{ marginBottom: 24 }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span
-                key={i}
-                style={{
-                  color: i < (product.rating || 0) ? "#ff9500" : "#e0e2e6",
-                  fontSize: 22
-                }}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-          {/* Buton blerje */}
-          <button
-            onClick={() => addToCart(product)} // <- FUNKSIONAL!
-            style={{
-              background: "#023047",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              padding: "12px 34px",
-              fontWeight: 600,
-              fontSize: 18,
-              cursor: "pointer",
-              marginBottom: 24,
-              transition: "background 0.14s"
-            }}
-          >
-            Shto në shportë 🛒
-          </button>
-        </div>
-      </div>
 
-      {/* --------- Specifika në tabelë --------- */}
-      <div
-        style={{
-          marginTop: 55,
-          background: "#f9fafc",
-          padding: "34px 0",
-          borderRadius: 16
-        }}
-      >
-        <h3
-          style={{
-            color: "#434a62",
-            fontWeight: 700,
-            fontSize: 22,
-            marginLeft: 44,
-            marginBottom: 10
-          }}
-        >
-          Përshkrimi i produktit
-        </h3>
-        <table
-          style={{
-            width: "93%",
-            margin: "auto",
-            background: "white",
-            borderCollapse: "collapse",
-            borderRadius: "10px",
-            overflow: "hidden",
-            fontSize: 17
-          }}
-        >
-          <thead>
-            <tr style={{ background: "#f3f6fa" }}>
-              <th style={{ padding: "13px 0", fontWeight: 700, color: "#8391a8" }}>
-                Key
-              </th>
-              <th style={{ padding: "13px 0", fontWeight: 700, color: "#8391a8" }}>
-                Value
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {product.specs &&
-              Object.entries(product.specs).map(([key, value]) => (
-                <tr key={key} style={{ borderBottom: "1px solid #f0f0f5" }}>
-                  <td
-                    style={{
-                      color: "#283956",
-                      padding: "10px 0 10px 12px",
-                      fontWeight: 500
-                    }}
-                  >
-                    {key}
-                  </td>
-                  <td style={{ color: "#636e7d", padding: "10px 0" }}>{value}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+          {/* Tabela e specifikave */}
+          {specs.length > 0 && (
+            <div className="pd-specs">
+              <h2 className="pd-specs-title">Specifikime</h2>
+              <table className="pd-specs-table" role="table">
+                <tbody>
+                  {specs.map((row, i) => (
+                    <tr key={i}>
+                      <th scope="row" className="pd-specs-k">{row.k}</th>
+                      <td className="pd-specs-v">{row.v}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {categoryLabel && (
+            <div className="pd-cat">
+              Kategoria:{" "}
+              <Link to={`/category/${(product.category || "").toLowerCase()}`} className="pd-link">
+                {categoryLabel}
+              </Link>
+            </div>
+          )}
+        </aside>
       </div>
     </div>
   );
-};
+}
 
 export default ProductDetails;

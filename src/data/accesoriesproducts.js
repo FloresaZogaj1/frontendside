@@ -1,3 +1,12 @@
+import airpods from "../assets/airpods-pro-2-removebg-preview (1).png"
+import im from "../assets/619EDe7KD8L-removebg-preview.png";
+import mags from "../assets/magsafe-accessories-pp-header-removebg-preview.png";
+import af from "../assets/images-removebg-preview (1).png";
+import py from "../assets/615HRY2dnML._UF350_350_QL80_-removebg-preview.png";
+import cv from "../assets/51voSLLr+9L-removebg-preview.png";
+import hr from "../assets/HRGH2-removebg-preview.png";
+import nm from "../assets/images__1_-removebg-preview.png"
+
 const accessoriesproducts = [
   {
     id: "airpods-pro-2",
@@ -5,9 +14,7 @@ const accessoriesproducts = [
     description: "Apple AirPods Pro (2nd Gen), ANC, MagSafe.",
     price: 289,
     oldPrice: 309,
-    images: [
-      "https://www.apple.com/newsroom/images/product/airpods/standard/Apple-AirPods-Pro-2nd-gen-hero-220907_big.jpg.large.jpg"
-    ],
+    images: [airpods ],
     specs: {
       Tipi: "In-ear Wireless",
       "Reduktim Zhurme (ANC)": "Po",
@@ -24,9 +31,7 @@ const accessoriesproducts = [
     description: "Karikim i shpejtë, Type-C/USB, kapacitet i madh.",
     price: 99,
     oldPrice: 109,
-    images: [
-      "https://m.media-amazon.com/images/I/617tRSjs32L._AC_UF1000,1000_QL80_.jpg"
-    ],
+    images: [im ],
     specs: {
       Kapaciteti: "20,000mAh",
       Input: "USB-C, MicroUSB",
@@ -43,7 +48,7 @@ const accessoriesproducts = [
     price: 95,
     oldPrice: 99,
     images: [
-      "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MHXH3?wid=2000&hei=2000&fmt=jpeg&qlt=95&.v=1709923716533"
+      mags
     ],
     specs: {
       Lloji: "Wireless Magnetic",
@@ -60,7 +65,7 @@ const accessoriesproducts = [
     price: 149,
     oldPrice: 169,
     images: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-TX33DrhOADAW_ZKFzukU4p_g1NdpRaec0w&s"
+      af
     ],
     specs: {
       Tipi: "In-ear Wireless",
@@ -78,7 +83,7 @@ const accessoriesproducts = [
     price: 115,
     oldPrice: 129,
     images: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3Xf5_pUuPb2JKv-z8Qdq1FNR5nsSPxPh-RQ&s"
+     py
     ],
     specs: {
       Porte: "2x USB-A, 1x HDMI, 1x SD, 1x microSD, 1x USB-C PD",
@@ -95,7 +100,7 @@ const accessoriesproducts = [
     price: 79,
     oldPrice: 84,
     images: [
-      "https://www.androidauthority.com/wp-content/uploads/2021/08/Samsung-Galaxy-Buds-2-marketing-renders-1.jpg"
+      cv
     ],
     specs: {
       Kompatibilitet: "iPhone 15 Pro Max",
@@ -113,7 +118,7 @@ const accessoriesproducts = [
     price: 149,
     oldPrice: 159,
     images: [
-      "https://images.macrumors.com/t/6EfOOorTTj6MwcCxNWbI86eDaWM=/2000x/article-new/2022/06/belkin-wireless-charger.jpg"
+      hr
     ],
     specs: {
       "Karikim Wireless": "Po",
@@ -131,7 +136,7 @@ const accessoriesproducts = [
     price: 199,
     oldPrice: 219,
     images: [
-      "https://m.media-amazon.com/images/I/51tdxuhzfoL.jpg"
+      nm
     ],
     specs: {
       "Kapaciteti": "3 pajisje njëkohësisht",

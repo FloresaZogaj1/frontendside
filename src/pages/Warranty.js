@@ -1,186 +1,413 @@
+// src/pages/Warranty.jsx — PRINT vetëm fleta e garancionit (white mode për print, dark në ekran)
+
 import React, { useState } from "react";
 import {
   Box, Typography, TextField, Button, MenuItem, Paper, Alert, Select, FormControl, InputLabel
 } from "@mui/material";
-import logo from "../assets/PFP-01__5_-removebg-preview.png"; // ndrysho path sipas projektit
+import logo from "../assets/PFP-01__5_-removebg-preview.png";
+import { api } from "../api"; // axios instance me baseURL dhe Authorization interceptor
+import { useAuth } from "../AuthContext";
 
-function getTodayDate() {
+// Marrim datën në format DD.MM.YYYY
+const getTodayDate = () => {
   const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const year = today.getFullYear();
+  return `${day}.${month}.${year}`;
+};
 
+// Të dhënat e pajisjeve dhe versionet e softuerit
 const deviceData = {
   Apple: [
-    "iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max",
-    "iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max",
-    "iPhone SE (3rd gen)", "iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max",
-    "iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max",
-    "iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPhone 16e",
-    "iPad (8th gen)", "iPad (9th gen)", "iPad (10th gen)", "iPad mini (6th gen)",
-    "iPad Air (4th gen)", "iPad Air (5th gen)", "iPad Pro 11″ (2020)", "iPad Pro 12.9″ (2020)",
-    "iPad Pro 11″ (2021)", "iPad Pro 12.9″ (2021)", "iPad Pro 11″ (M2 2022)", "iPad Pro 12.9″ (M2 2022)",
-    "Apple Watch Series 6", "Apple Watch SE (1st gen)", "Apple Watch Series 7", "Apple Watch Series 8",
-    "Apple Watch SE (2nd gen)", "Apple Watch Ultra", "Apple Watch Series 9", "Apple Watch Ultra 2", "Apple Watch Series 10"
+    "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
+    "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
+    "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13 mini", "iPhone 13",
+    "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12 mini", "iPhone 12",
+    "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11", "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X",
+    "iPhone 8 Plus", "iPhone 8", "iPhone 7 Plus", "iPhone 7", "iPhone 6s Plus", "iPhone 6s", "iPhone 6 Plus", "iPhone 6", "iPhone SE"
   ],
   Samsung: [
-    "Galaxy S20", "Galaxy S20+", "Galaxy S20 Ultra", "Galaxy S20 FE / FE 5G",
-    "Galaxy S21", "Galaxy S21+", "Galaxy S21 Ultra", "Galaxy S21 FE",
-    "Galaxy S22", "Galaxy S22+", "Galaxy S22 Ultra", "Galaxy S23", "Galaxy S23+", "Galaxy S23 Ultra", "Galaxy S23 FE",
-    "Galaxy S24", "Galaxy S24+", "Galaxy S24 Ultra", "Galaxy S24 FE", "Galaxy S25", "Galaxy S25+", "Galaxy S25 Ultra", "Galaxy S25 Edge", "Galaxy S25 Ultra Enterprise Edition",
-    "Galaxy A25", "Galaxy A26 5G", "Galaxy A33", "Galaxy A34", "Galaxy A35", "Galaxy A52", "Galaxy A53", "Galaxy A54", "Galaxy A55", "Galaxy A56",
-    "Galaxy F05", "Galaxy F14", "Galaxy F15", "Galaxy F34", "Galaxy F54", "Galaxy F55",
-    "Galaxy M05", "Galaxy M14", "Galaxy M15", "Galaxy M33", "Galaxy M34", "Galaxy M35", "Galaxy M53", "Galaxy M54", "Galaxy M55", "Galaxy M55s",
-    "Galaxy Z Fold 2", "Galaxy Z Fold 3", "Galaxy Z Fold 4", "Galaxy Z Fold 5", "Galaxy Z Fold 6", "Galaxy Z Fold 7",
-    "Galaxy Z Flip", "Galaxy Z Flip 3", "Galaxy Z Flip 4", "Galaxy Z Flip 5", "Galaxy Z Flip 6", "Galaxy Z Flip 7", "Galaxy Z Flip 7 FE",
-    "Galaxy Tab S6 Lite", "Galaxy Tab S7", "Galaxy Tab S7+", "Galaxy Tab S7 FE",
-    "Galaxy Tab S8", "Galaxy Tab S8+", "Galaxy Tab S8 Ultra", "Galaxy Tab S9", "Galaxy Tab S9+", "Galaxy Tab S9 Ultra",
-    "Galaxy Tab S10", "Galaxy Tab S10+", "Galaxy Tab S10 Ultra",
-    "Galaxy Watch Active2", "Galaxy Watch 3", "Galaxy Watch 4", "Galaxy Watch 4 Classic",
-    "Galaxy Watch 5", "Galaxy Watch 5 Pro", "Galaxy Watch 6", "Galaxy Watch 6 Classic",
-    "Galaxy Watch 7", "Galaxy Watch 8", "Galaxy Watch 8 Classic", "Galaxy Watch Ultra"
+    "Galaxy S24 Ultra", "Galaxy S24+", "Galaxy S24",
+    "Galaxy S23 Ultra", "Galaxy S23+", "Galaxy S23", "Galaxy S23 FE",
+    "Galaxy S22 Ultra", "Galaxy S22+", "Galaxy S22",
+    "Galaxy S21 Ultra", "Galaxy S21+", "Galaxy S21", "Galaxy S21 FE",
+    "Galaxy Note 20 Ultra", "Galaxy Note 20",
+    "Galaxy A54", "Galaxy A34", "Galaxy A24", "Galaxy A14", "Galaxy A04"
   ],
   Xiaomi: [
-    "Mi 10", "Mi 10 Pro", "Mi 10 Lite", "Mi 10T", "Mi 10T Pro", "Mi 11", "Mi 11 Pro", "Mi 11 Ultra", "Mi 11 Lite", "Mi 11X",
-    "Mi 12", "Mi 12 Pro", "Mi 12X", "Mi 12T", "Mi 12T Pro", "Mi 13", "Mi 13 Pro", "Mi 13 Ultra", "Mi 13 Lite",
-    "Mi 14", "Mi 14 Pro", "Mi 14 Ultra", "Xiaomi 15 Ultra", "Redmi Note 10", "Redmi Note 10 Pro", "Redmi Note 10 Pro Max", "Redmi Note 10 5G",
-    "Redmi Note 11", "Redmi Note 11 Pro", "Redmi Note 11 Pro+", "Redmi Note 12", "Redmi Note 12 Pro", "Redmi Note 12 Pro+", "Redmi Note 12 Turbo", "Redmi Note 12S", "Redmi Note 12 5G",
-    "Redmi Note 13", "Redmi Note 13 Pro", "Redmi Note 13 Pro+", "Redmi Note 13 R", "Redmi Note 13 5G", "Redmi Note 14", "Redmi Note 14 Pro", "Redmi Note 14 Pro+", "Redmi Note 14 Pro+ 5G",
-    "Redmi K40 Gaming", "Redmi K40S", "Redmi K50", "Redmi K50 Pro", "Redmi K50 Ultra", "Redmi K50i", "Redmi K60", "Redmi K60 Pro", "Redmi K60 Ultra", "Redmi K70", "Redmi K70 Pro", "Redmi K70 Ultra",
-    "Poco F2 Pro", "Poco F3", "Poco F4", "Poco F5", "Poco F5 Pro", "Poco M7 Pro 5G", "Poco X3", "Poco X3 Pro", "Poco X4 GT", "Poco X5 Pro", "Poco X6", "Poco X6 Pro", "Poco X7", "Poco X7 Neo", "Poco X7 Pro", "Poco X7 Ultra",
-    "Xiaomi Pad 5", "Xiaomi Pad 5 Pro", "Xiaomi Pad 6", "Xiaomi Pad 6 Pro", "Xiaomi Pad 6 Max 14", "Redmi Pad", "Redmi Pad SE 8.7", "Redmi Pad Pro",
-    "Mi Watch", "Mi Watch Lite", "Mi Watch Revolve", "Xiaomi Watch S1", "Watch S1 Active", "Xiaomi Watch 2", "Watch 2 Pro", "Xiaomi Watch S4",
-    "Mi Smart Band 5", "6", "7", "Xiaomi Smart Band 8", "9 Pro"
+    "Xiaomi 14 Ultra", "Xiaomi 14", "Xiaomi 13T Pro", "Xiaomi 13T",
+    "Xiaomi 13 Pro", "Xiaomi 13", "Xiaomi 12 Pro", "Xiaomi 12",
+    "Redmi Note 13 Pro+", "Redmi Note 13 Pro", "Redmi Note 13", "Redmi Note 12 Pro", "Redmi Note 12",
+    "Redmi 12", "Redmi 11", "POCO X5 Pro", "POCO F5 Pro", "POCO F5"
   ]
 };
 
 const softwareVersions = {
-  Apple: [
-    "iOS 14 – 2020", "iOS 15 – 2021", "iOS 16 – 2022", "iOS 17 – 2023", "iOS 18 – 2024 ",
-    "iPadOS 14 – 2020", "iPadOS 15 – 2021", "iPadOS 16 – 2022", "iPadOS 17 – 2023", "iPadOS 18 – 2024 ",
-    "watchOS 7 – 2020", "watchOS 8 – 2021", "watchOS 9 – 2022", "watchOS 10 – 2023", "watchOS 11 – 2024 "
-  ],
-  Samsung: [
-    "Android 10 + One UI 2.x – 2020", "Android 11 + One UI 3.x – 2021", "Android 12 + One UI 4.x – 2022", "Android 13 + One UI 5.x – 2023",
-    "Android 14 + One UI 6.x – 2024", "Android 15 + One UI 7.x – 2025 ",
-    "Tizen OS 5.5 – 2020 (Galaxy Watch 3)", "Wear OS 3 (me One UI Watch) – 2021–2023 (Galaxy Watch 4, 5)", "Wear OS 4 – 2023 (Galaxy Watch 6, 6 Classic)", "Wear OS 5 – 2024–2025 "
-  ],
-  Xiaomi: [
-    "MIUI 12 – 2020 ", "MIUI 12.5 – 2021", "MIUI 13 – 2022 ", "MIUI 14 – 2023 ",
-    "HyperOS 1.0 –", "HyperOS 2.0 –  ",
-    "RTOS – deri 2022 ", "Zepp OS 1.0 – 2022 (Watch S1)", "Zepp OS 2.0 – 2023 ", "HyperOS for Watch – 2024 "
-  ]
+  Apple: ["iOS 18.0", "iOS 17.6", "iOS 17.5", "iOS 17.4", "iOS 17.3", "iOS 17.2", "iOS 17.1", "iOS 17.0", "iOS 16.7", "iOS 16.6", "iOS 16.5", "iOS 16.4"],
+  Samsung: ["Android 14 (One UI 6.0)", "Android 13 (One UI 5.1)", "Android 12 (One UI 4.1)", "Android 11 (One UI 3.1)"],
+  Xiaomi: ["MIUI 14 (Android 13)", "MIUI 13 (Android 12)", "MIUI 12 (Android 11)", "HyperOS (Android 14)"]
 };
+
+const gjendjetPajisjes = [
+  { value: "New", label: "E re" },
+  { value: "Excellent", label: "E shkëlqyer" },
+  { value: "Good", label: "E mirë" },
+  { value: "Fair", label: "E pranueshme" },
+  { value: "Poor", label: "E dëmtuar" }
+];
+
+const kohezgjatjatGarancise = [
+  { value: "30 ditë", label: "30 ditë" },
+  { value: "3 muaj", label: "3 muaj" },
+  { value: "6 muaj", label: "6 muaj" },
+  { value: "12 muaj", label: "12 muaj" },
+  { value: "24 muaj", label: "24 muaj" }
+];
 
 const llojetPageses = [
   { value: "Cash", label: "Cash" },
-  { value: "Transfer Bankar", label: "Transfer Bankar" },
-  { value: "POS", label: "POS" }
+  { value: "Card", label: "Card" },
+  { value: "Bank Transfer", label: "Bank Transfer" },
+  { value: "Installments", label: "Installments" }
 ];
 
-const kohezgjatjaOptions = Array.from({ length: 24 }, (_, i) => ({
-  value: `${i + 1} muaj`,
-  label: `${i + 1} muaj`
-}));
+// Stili i formularit
+const paperSx = {
+  p: 4,
+  bgcolor: "rgba(255,255,255,0.05)",
+  color: "var(--text)",
+  border: "1px solid rgba(255,255,255,0.1)"
+};
 
+const inputSx = {
+  mb: 2,
+  "& .MuiInputBase-input": { color: "var(--text)" },
+  "& .MuiInputLabel-root": { color: "var(--text-muted)" },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--accent)" }
+  }
+};
+
+const selectControlSx = {
+  mb: 2,
+  "& .MuiInputLabel-root": { color: "var(--text-muted)" },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--accent)" }
+  },
+  "& .MuiSelect-select": { color: "var(--text)" },
+  "& .MuiSelect-icon": { color: "var(--text-muted)" }
+};
+
+const menuProps = {
+  PaperProps: {
+    style: {
+      backgroundColor: "rgba(30, 30, 30, 0.95)",
+      backdropFilter: "blur(10px)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      color: "var(--text)"
+    }
+  }
+};
+
+// CSS për printim - Simple solution
 const warrantyCSS = `
-  ..warranty-sheet {
-  font-family: 'Arial', sans-serif;
-  width: 630px; /* më e ngushtë, fletë A4 */
-  margin: 0 auto;
-  background: #fff;
-  color: #222;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 14px #0000000a;
-  padding: 28px 42px 28px 42px; /* më shumë hapësirë djathtas/majtas */
-}
+  .warranty-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    z-index: 9999;
+    overflow: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .warranty-content {
+    background: white;
+    color: black;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .warranty-close {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 10000;
+  }
+  
+  .warranty-content * {
+    color: black !important;
+    background: white !important;
+  }
+  
+  .warranty-content h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .warranty-content p {
+    margin: 8px 0;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .warranty-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .warranty-content th,
+  .warranty-content td {
+    border: 2px solid black;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  .warranty-content th {
+    background: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .warranty-content img {
+    display: block;
+    max-width: 100px;
+    margin: 0 auto 15px;
+  }
+  
+  @media print {
+    .warranty-close {
+      display: none !important;
+    }
+    
+    .warranty-modal {
+      background: white !important;
+    }
+    
+    body {
+      background: white !important;
+    }
+  }
+  
+  @media print {
+    .warranty-preview-overlay {
+      background: white !important;
+      position: static !important;
+      width: auto !important;
+      height: auto !important;
+    }
+    
+    .warranty-preview-container {
+      box-shadow: none !important;
+      border: none !important;
+      max-height: none !important;
+    }
+    
+    .warranty-close-btn {
+      display: none !important;
+    }
+    
+    .warranty-document {
+      padding: 0 !important;
+    }
+    
+    body > *:not(.warranty-preview-overlay) {
+      display: none !important;
+    }
+  }
 
-.warranty-logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.warranty-logo-row img { height: 52px; }
-.warranty-header {
-  text-align: center;
-  margin: 14px 0 18px 0;
-  font-size: 1.15rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-.warranty-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 0 38px;
-  margin-bottom: 12px;
-}
-.warranty-label {
-  font-weight: bold;
-  min-width: 100px;
-  display: inline-block;
-  margin-right: 3px;
-}
-.warranty-details-row { margin-bottom: 8px; font-size: 1rem; }
-.warranty-grid > div:last-child {
-  padding-right: 10px; /* HAPËSIRË ekstra te anët e djathta */
-}
-.warranty-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  margin-bottom: 16px;
-  font-size: 1rem;
-}
-.warranty-table th, .warranty-table td {
-  border: 1px solid #bfbfbf;
-  padding: 5px 7px;
-  text-align: center;
-}
-.warranty-table th { background: #f5f5f5; font-weight: bold; }
-.warranty-section-title { margin-top: 16px; font-size: 1.04rem; font-weight: 700; }
-.warranty-kushtet {
-  font-size: 0.97rem;
-  line-height: 1.7;
-  margin-bottom: 0;
-  margin-top: 10px;
-}
-.warranty-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 34px;
-  align-items: end;
-  font-size: 0.95rem;
-}
-.warranty-sign {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  min-width: 200px;
-}
-.warranty-sign-line {
-  border-bottom: 1.5px solid #222;
-  width: 140px;
-  margin-bottom: 2px;
-  margin-left: auto;
-}
-.warranty-sign-label {
-  font-size: 0.98rem;
-  color: #595959;
-  margin-right: 5px;
-  white-space: nowrap;
-}
-@media print {
-  body * { visibility: hidden; }
-  .warranty-sheet, .warranty-sheet * { visibility: visible !important; }
-  .warranty-sheet { position: absolute; left: 0; top: 0; width: 100vw !important; box-shadow: none; border: none; }
-}
+  @media print {
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body { 
+      background: white !important; 
+      color: black !important; 
+    }
+    
+    @page { 
+      size: A4; 
+      margin: 15mm; 
+    }
+    
+    .warranty-sheet {
+      width: 100% !important;
+      max-width: none !important;
+      background: white !important;
+      color: black !important;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      line-height: 1.3;
+      page-break-inside: avoid;
+      box-shadow: none !important;
+      margin: 0 !important;
+      border: none !important;
+      padding: 0 !important;
+      position: static !important;
+    }
+    
+    .warranty-logo-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid black;
+    }
+    
+    .warranty-logo-row img {
+      width: 80px;
+      height: auto;
+      object-fit: contain;
+    }
+    
+    .warranty-logo-row > div {
+      text-align: right;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+    
+    .warranty-header {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      text-transform: uppercase;
+    }
+    
+    .warranty-grid {
+      margin-bottom: 15px;
+    }
+    
+    .warranty-grid-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .warranty-details-row {
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+    
+    .warranty-label {
+      font-weight: bold;
+    }
+    
+    .warranty-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 10px;
+    }
+    
+    .warranty-table th,
+    .warranty-table td {
+      border: 1px solid black;
+      padding: 6px 4px;
+      text-align: left;
+      vertical-align: top;
+    }
+    
+    .warranty-table th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .warranty-section-title {
+      font-size: 12px;
+      font-weight: bold;
+      margin: 15px 0 8px 0;
+      text-decoration: underline;
+    }
+    
+    .warranty-kushtet {
+      font-size: 9px;
+      line-height: 1.4;
+      text-align: justify;
+      margin-bottom: 20px;
+    }
+    
+    .warranty-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 30px;
+      font-size: 10px;
+    }
+    
+    .warranty-sign {
+      text-align: center;
+    }
+    
+    .warranty-sign-line {
+      display: inline-block;
+      width: 120px;
+      border-bottom: 1px solid black;
+      margin-bottom: 3px;
+    }
+    
+    .warranty-sign-label {
+      display: block;
+      font-size: 9px;
+    }
+  }
+  
+  /* Print media query to hide everything except warranty */
+  @media print {
+    body > *:not(#warranty-print-root) {
+      display: none !important;
+    }
+    
+    .print-overlay {
+      display: none !important; /* Hide the dark overlay during print */
+    }
+    
+    #warranty-print-root {
+      display: block !important;
+      position: static !important;
+    }
+    
+    .warranty-sheet {
+      box-shadow: none !important;
+      margin: 0 !important;
+      border: none !important;
+      position: static !important;
+    }
+  }
 `;
 
 const Warranty = () => {
-  const [form, setForm] = useState({
+  const { user, loading } = useAuth();
+  
+  // Draft nga localStorage
+  const savedDraft = localStorage.getItem("warrantyDraft");
+  const initialForm = savedDraft ? JSON.parse(savedDraft) : {
     emri: "",
     mbiemri: "",
     telefoni: "",
@@ -189,54 +416,237 @@ const Warranty = () => {
     modeli: "",
     imei: "",
     softInfo: "",
+    gjendja: "New",
     kohezgjatja: "",
     cmimi: "",
     data: getTodayDate(),
     komente: "",
     llojiPageses: "Cash"
-  });
+  };
+
+  const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [showPrint, setShowPrint] = useState(false);
 
-  const validateIMEI = imei => /^\d{14}$/.test(imei);
-  const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhone = tel => /^\d{8,}$/.test(tel.trim());
+  // Check if user is authenticated and is admin
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Typography>Duke ngarkuar...</Typography>
+      </Box>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <Box sx={{ maxWidth: 600, mx: "auto", mt: 6, p: 4, textAlign: 'center' }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Qasja e kufizuar
+          </Typography>
+          <Typography>
+            Vetëm administratorët mund të krijojnë fletë garancioni. 
+            Ju lutem kyçuni me llogari administratori.
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  const validateIMEI = (imei) => /^\d{14}$/.test(imei);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhone = (tel) => /^\d{8,}$/.test(tel.trim());
   const requireContact = () =>
     (!!form.email && validateEmail(form.email)) || (!!form.telefoni && validatePhone(form.telefoni));
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
     setSuccess("");
   };
+  const handleMarkaChange = (e) => setForm({ ...form, marka: e.target.value, modeli: "", softInfo: "" });
+  const handleModeliChange = (e) => setForm({ ...form, modeli: e.target.value });
 
-  const handleMarkaChange = e => {
-    setForm({ ...form, marka: e.target.value, modeli: "", softInfo: "" });
-  };
-  const handleModeliChange = e => {
-    setForm({ ...form, modeli: e.target.value });
-  };
 
-  const handlePrint = () => {
-    if (!form.emri) return setError("Shkruani emrin.");
-    if (!form.mbiemri) return setError("Shkruani mbiemrin.");
-    if (!requireContact()) return setError("Vendosni një numër telefoni ose një email të vlefshëm.");
-    if (!form.marka || !form.modeli) return setError("Zgjidhni pajisjen dhe modelin.");
-    if (!form.imei || !validateIMEI(form.imei)) return setError("IMEI duhet të jetë saktësisht 14 shifra.");
-    if (!form.softInfo) return setError("Zgjidhni versionin e softuerit.");
+
+  const handleDirectPrint = async () => {
+    // Same validation as handlePrint
+    if (!form.emri?.trim() || !form.mbiemri?.trim()) return setError("Shkruani emrin dhe mbiemrin e klientit.");
+    if (!validatePhone(form.telefoni)) return setError("Numri i telefonit duhet të jetë të paktën 8 shifra.");
+    if (form.email && !validateEmail(form.email)) return setError("Email-i nuk është valid.");
+    if (!form.marka) return setError("Zgjidhni markën e pajisjes.");
+    if (!form.modeli) return setError("Zgjidhni modelin e pajisjes.");
+    if (!validateIMEI(form.imei)) return setError("IMEI-ja duhet të jetë saktësisht 14 shifra.");
+    if (!form.softInfo) return setError("Zgjidhni Software Info.");
     if (!form.kohezgjatja) return setError("Zgjidhni kohëzgjatjen e garancionit.");
     if (!form.cmimi) return setError("Shkruani çmimin.");
-    setShowPrint(true);
-    setTimeout(() => {
-      window.print();
-      setShowPrint(false);
-    }, 350);
+
+    setError("");
+    setSuccess("");
+    
+    try {
+      await api.post("/warranty/from-form", form);
+      
+      // Create print content
+      const printContent = createPrintHTML(form);
+      
+      // Open new window for printing
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      
+      // Wait a moment then print
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+      
+      // Clear form after successful save
+      setForm({
+        emri: "",
+        mbiemri: "",
+        telefoni: "",
+        email: "",
+        marka: "",
+        modeli: "",
+        imei: "",
+        softInfo: "",
+        gjendja: "New",
+        komente: "",
+        kohezgjatja: "",
+        cmimi: "",
+        data: getTodayDate(),
+        llojiPageses: "Cash"
+      });
+      
+      setSuccess("Garancioni u ruajt dhe u dërgua në printim!");
+      
+    } catch (e) {
+      console.error("Direct print error:", e);
+      const msg = e?.response?.data?.message || e?.message || "Gabim në ruajtjen e garancionit.";
+      
+      if (e?.response?.status === 401 || e?.response?.status === 403) {
+        setError("Seanca ka skaduar ose s'keni të drejta. Ju lutem kyçuni si admin.");
+        return;
+      }
+      
+      setError(msg);
+    }
   };
 
-  // Draft ruhet në localStorage
+  const createPrintHTML = (data) => {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Fletë Garancioni</title>
+        <style>
+          body { 
+            font-family: Arial, sans-serif; 
+            margin: 20mm;
+            color: black;
+            background: white;
+          }
+          .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+          }
+          .header h1 { 
+            margin: 10px 0; 
+            font-size: 24px; 
+          }
+          .logo { 
+            width: 80px; 
+            margin-bottom: 15px; 
+          }
+          .info { 
+            margin-bottom: 20px; 
+          }
+          .info p { 
+            margin: 8px 0; 
+            font-size: 14px; 
+          }
+          table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+          }
+          th, td { 
+            border: 2px solid black; 
+            padding: 12px; 
+            text-align: left; 
+          }
+          th { 
+            background: #f0f0f0; 
+            font-weight: bold; 
+            text-align: center; 
+          }
+          .terms { 
+            font-size: 12px; 
+            line-height: 1.5; 
+            margin-top: 30px; 
+          }
+          .footer { 
+            text-align: center; 
+            margin-top: 40px; 
+            font-size: 12px; 
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>FLETË GARANCIONI</h1>
+        </div>
+        
+        <div class="info">
+          <p><strong>Emri i klientit:</strong> ${data.emri} ${data.mbiemri}</p>
+          <p><strong>Numri i telefonit:</strong> ${data.telefoni}</p>
+          <p><strong>Email:</strong> ${data.email || 'N/A'}</p>
+          <p><strong>Data e blerjes:</strong> ${data.data}</p>
+          <p><strong>Çmimi:</strong> €${data.cmimi}</p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Marka</th>
+              <th>Modeli</th>
+              <th>IMEI</th>
+              <th>Software Info</th>
+              <th>Kohëzgjatja</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${data.marka}</td>
+              <td>${data.modeli}</td>
+              <td>${data.imei}</td>
+              <td>${data.softInfo}</td>
+              <td>${data.kohezgjatja}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="terms">
+          <h3>Kushtet e Garancionit:</h3>
+          <p>• Kjo garanci mbulon defektet e prodhimit për periudhën e specifikuar.</p>
+          <p>• Dëmtimet fizike, uji dhe përdorimi i gabuar nuk mbulohen nga garancia.</p>
+          <p>• Produkti duhet të paraqitet së bashku me këtë certifikatë garancije.</p>
+          ${data.komente ? `<p><strong>Komente:</strong> ${data.komente}</p>` : ''}
+        </div>
+
+        <div class="footer">
+          <p><strong>Top Mobile Store</strong></p>
+          <p>Tel: +383 44 123 456 | Email: info@topmobile.com</p>
+          <p>Adresa: Rruga Kryesore, Prishtinë, Kosovë</p>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
   const handleDraft = () => {
-    localStorage.setItem('warrantyDraft', JSON.stringify(form));
+    localStorage.setItem("warrantyDraft", JSON.stringify(form));
     setSuccess("Drafti është ruajtur me sukses!");
   };
 
@@ -245,22 +655,24 @@ const Warranty = () => {
 
   return (
     <>
-      <Box sx={{ maxWidth: 800, mx: "auto", mt: 6, p: 4 }}>
-        <Typography variant="h5" fontWeight={700} mb={3}>
+      {/* Forma (nuk printohet) */}
+      <Box sx={{ maxWidth: 800, mx: "auto", mt: 6, p: 4, bgcolor: "var(--bg)" }}>
+        <Typography variant="h5" fontWeight={700} mb={3} sx={{ color: "var(--text)" }}>
           Fletë Garancioni
         </Typography>
-        <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
+
+        <Paper elevation={0} sx={paperSx}>
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
-          <TextField label="Emri *" name="emri" value={form.emri} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
-          <TextField label="Mbiemri *" name="mbiemri" value={form.mbiemri} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
-          <TextField label="Numri i telefonit" name="telefoni" value={form.telefoni} onChange={handleChange} fullWidth sx={{ mb: 2 }} inputProps={{ inputMode: "numeric", pattern: "\\d{8,}" }} />
-          <TextField label="Email" name="email" value={form.email} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
+          <TextField label="Emri *" name="emri" value={form.emri} onChange={handleChange} fullWidth sx={inputSx} />
+          <TextField label="Mbiemri *" name="mbiemri" value={form.mbiemri} onChange={handleChange} fullWidth sx={inputSx} />
+          <TextField label="Numri i telefonit" name="telefoni" value={form.telefoni} onChange={handleChange} fullWidth sx={inputSx} inputProps={{ inputMode: "numeric", pattern: "\\d{8,}" }} />
+          <TextField label="Email" name="email" value={form.email} onChange={handleChange} fullWidth sx={inputSx} />
 
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth sx={selectControlSx}>
             <InputLabel>Marka *</InputLabel>
-            <Select value={form.marka} name="marka" onChange={handleMarkaChange} label="Marka *">
+            <Select value={form.marka} name="marka" onChange={handleMarkaChange} label="Marka *" MenuProps={menuProps}>
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
               <MenuItem value="Apple">🍏 Apple</MenuItem>
               <MenuItem value="Samsung">📱 Samsung</MenuItem>
@@ -268,66 +680,65 @@ const Warranty = () => {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2 }} disabled={!form.marka}>
+          <FormControl fullWidth sx={selectControlSx}>
             <InputLabel>Modeli *</InputLabel>
-            <Select value={form.modeli} name="modeli" onChange={handleModeliChange} label="Modeli *">
+            <Select value={form.modeli} name="modeli" onChange={handleModeliChange} label="Modeli *" MenuProps={menuProps} disabled={!form.marka}>
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
-              {modelet.map(modeli => (
-                <MenuItem key={modeli} value={modeli}>{modeli}</MenuItem>
+              {modelet.map(model => (
+                <MenuItem key={model} value={model}>{model}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          <TextField
-            label="IMEI (14 shifra) *"
-            name="imei"
-            value={form.imei}
-            onChange={handleChange}
-            fullWidth
-            sx={{ mb: 2 }}
-            inputProps={{ maxLength: 14, inputMode: "numeric", pattern: "\\d{14}" }}
-            helperText="Lejohet vetëm 14 shifra"
-          />
+          <TextField label="IMEI (14 shifra) *" name="imei" value={form.imei} onChange={handleChange} fullWidth sx={inputSx} inputProps={{ maxLength: 14, pattern: "\\d{14}" }} />
 
-          <FormControl fullWidth sx={{ mb: 2 }} disabled={!form.marka}>
+          <FormControl fullWidth sx={selectControlSx}>
             <InputLabel>Software Info *</InputLabel>
-            <Select value={form.softInfo} name="softInfo" onChange={handleChange} label="Software Info *">
+            <Select value={form.softInfo} name="softInfo" onChange={handleChange} label="Software Info *" MenuProps={menuProps} disabled={!form.marka}>
               <MenuItem value=""><em>Zgjidh</em></MenuItem>
-              {softwareOpts.map(sw => (
-                <MenuItem key={sw} value={sw}>{sw}</MenuItem>
+              {softwareOpts.map(soft => (
+                <MenuItem key={soft} value={soft}>{soft}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Kohëzgjatja e garancionit *</InputLabel>
-            <Select value={form.kohezgjatja} name="kohezgjatja" onChange={handleChange} label="Kohëzgjatja e garancionit *">
-              <MenuItem value=""><em>Zgjidh</em></MenuItem>
-              {kohezgjatjaOptions.map(opt => (
+          <FormControl fullWidth sx={selectControlSx}>
+            <InputLabel>Gjendja e pajisjes *</InputLabel>
+            <Select value={form.gjendja} name="gjendja" onChange={handleChange} label="Gjendja e pajisjes *" MenuProps={menuProps}>
+              {gjendjetPajisjes.map(opt => (
                 <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          <TextField label="Çmimi (€) *" name="cmimi" value={form.cmimi} onChange={handleChange} fullWidth sx={{ mb: 2 }} />
-          <TextField label="Data e fillimit të garancionit" name="data" value={form.data} fullWidth sx={{ mb: 2 }} InputProps={{ readOnly: true }} />
-          <TextField label="Komente" name="komente" value={form.komente} onChange={handleChange} fullWidth multiline rows={2} sx={{ mb: 2 }} />
+          <FormControl fullWidth sx={selectControlSx}>
+            <InputLabel>Kohëzgjatja e garancionit *</InputLabel>
+            <Select value={form.kohezgjatja} name="kohezgjatja" onChange={handleChange} label="Kohëzgjatja e garancionit *" MenuProps={menuProps}>
+              <MenuItem value=""><em>Zgjidh</em></MenuItem>
+              {kohezgjatjatGarancise.map(opt => (
+                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField label="Çmimi (€) *" name="cmimi" value={form.cmimi} onChange={handleChange} fullWidth sx={inputSx} />
+          <TextField label="Data e fillimit të garancionit" name="data" value={form.data} fullWidth sx={inputSx} InputProps={{ readOnly: true }} />
+          <TextField label="Komente" name="komente" value={form.komente} onChange={handleChange} fullWidth multiline rows={2} sx={inputSx} />
+
+          <FormControl fullWidth sx={{ ...selectControlSx, mb: 3 }}>
             <InputLabel>Lloji i pagesës *</InputLabel>
-            <Select value={form.llojiPageses} name="llojiPageses" onChange={handleChange} label="Lloji i pagesës *">
+            <Select value={form.llojiPageses} name="llojiPageses" onChange={handleChange} label="Lloji i pagesës *" MenuProps={menuProps}>
               {llojetPageses.map(opt => (
                 <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row', mt: 1 }}>
+          <Box sx={{ display: "flex", gap: 2, flexDirection: "row", mt: 1 }}>
             <Button
               variant="contained"
-              color="warning"
-              onClick={handlePrint}
-              sx={{ fontWeight: 700, fontSize: 17, background: "#FF8000" }}
+              onClick={handleDirectPrint}
+              sx={{ fontWeight: 700, fontSize: 17, background: "#4caf50", "&:hover": { background: "#45a049" } }}
               fullWidth
             >
               PRINTO FLETËN E GARANCIONIT
@@ -344,75 +755,8 @@ const Warranty = () => {
           </Box>
         </Paper>
       </Box>
-      {/* PRINT FLETË GARANCIONI */}
-      {showPrint && (
-        <div style={{ display: "block" }}>
-          <style>{warrantyCSS}</style>
-          <div className="warranty-sheet">
-            <div className="warranty-logo-row">
-              <img src={logo} alt="Logo" />
-              <div>
-                <div style={{ fontWeight: 600 }}>Top Mobile</div>
-                <div>Rr. Bulevardi dëshmorët e kombit<br />Ulpianë, Prishtinë</div>
-                <div>TEL: 045-407-222</div>
-              </div>
-            </div>
-            <div className="warranty-header">Fletë Garancioni</div>
-            <div className="warranty-grid">
-              <div className="warranty-grid-row">
-                <div>
-                  <div className="warranty-details-row"><span className="warranty-label">Klienti:</span> {form.emri} {form.mbiemri}</div>
-                  <div className="warranty-details-row"><span className="warranty-label">Data e fillimit te garancionit:</span> {form.data}</div>
-                </div>
-                <div>
-                  <div className="warranty-details-row"><span className="warranty-label">Detajet:</span> Çmimi: {form.cmimi}€</div>
-                </div>
-              </div>
-            </div>
-            <table className="warranty-table">
-              <thead>
-                <tr>
-                  <th>Modeli</th>
-                  <th>ImeI</th>
-                  <th>Software Info</th>
-                  <th>Kohëzgjatja e garancionit</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{form.modeli}</td>
-                  <td>{form.imei}</td>
-                  <td>{form.softInfo}</td>
-                  <td>{form.kohezgjatja}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="warranty-section-title">Kushtet e Garancionit</div>
-            <div className="warranty-kushtet">
-              Periudha e Garancionit fillon nga data e blerjes dhe perfundon ne afatin e shprehur ne Fletë Garancion. Shërbimi i garancionit do te kryhet ne ambientet e servisit te Top Mobile.<br /><br />
-              <b>Garancioni mbulon riparimin (kthimin ne gjendje pune) falas te produkteve te shitura nga Top Mobile, duke plotesuar njekohesisht te gjitha kushtet e meposhtme:</b><br />
-              - Defekti i produktit eshte me origjine prodhimi / nga fabrika<br />
-              - Produkti shoqerohet me Faturen e blerjes dhe Fleten e Garancise<br />
-              Top Mobile ka per obligim eleminimin e defektit sa me te shpejte, ne rastin me te keq per nje periudhe 30 ditore.<br /><br />
-              <b>Garancioni nuk vlen ne keto raste:</b><br />
-              - Demtimet fizike nga keperdorimi, pakujdesia etj<br />
-              - Perditësimi i software-sistemit operativ (Update, downgrade) etj<br />
-              - Perdorimi i produktit ne ambiente te papershtatshme (lagështi, nxehtësi, etj)<br />
-              - Demtimet e shkaktuara nga tensioni i larte apo i ulet i rrymes elektrike, nga demtimet termike apo mekanike rrufeja etj.<br />
-              - Demtimet nga ekspozimi i pajisjes ndaj lagështisë, nxehtësisë, tymit, dridhjeve, papastërtive, apo kushteve te jashtëzakonshme apo te papershtatshme.<br />
-              - Nëse bleresi nuk e ka flet garancionin.<br />
-              - Nëse aparati është hapur dhe është tentuar te riparohet nga person i cili nuk ka autorizim nga servisi i Top Mobile.<br />
-            </div>
-            <div className="warranty-footer">
-              <div><b>Top Mobile</b></div>
-              <div className="warranty-sign">
-                <span className="warranty-sign-line"></span>
-                <span className="warranty-sign-label">Nënshkrimi i klientit</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
+
     </>
   );
 };

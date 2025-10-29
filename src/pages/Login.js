@@ -1,73 +1,165 @@
-import React, { useState, useContext } from "react";
-import { Box, Button, TextField, Typography, Paper } from "@mui/material";
+import React, { useState, useContext, useEffect } from "react";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Alert,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { AuthContext } from "../AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-const API_URL = process.env.REACT_APP_API_URL;
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import "./Login.css";
+
+const API_URL = process.env.REACT_APP_API_URL || "https://api.topmobile.store";
+
+// Funksion ndihmës që bën fallback nëse /api/auth/login kthen 404
+async function loginRequest(body) {
+  // provo /api/auth/login
+  let res = await fetch(`${API_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  // nëse nuk ekziston (404), provo /auth/login
+  if (res.status === 404) {
+    res = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  }
+
+  return res;
+}
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
-  const { login } = useContext(AuthContext);
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const [showPwd, setShowPwd] = useState(false);
+  const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || null;
+
+  useEffect(() => {
+    const existing =
+      localStorage.getItem("tm_token") || localStorage.getItem("token");
+    if (existing || user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(""); // fshi errorin e vjetër
+    setMessage({ type: "", text: "" });
+
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-        credentials: "include"     // KJO ESHTE E RENDESISHME!
-      });
-      const data = await res.json();
+      const res = await loginRequest(form);
+      const data = await res.json().catch(() => ({}));
+
       if (res.ok && data.token && data.user) {
+        localStorage.setItem("tm_token", data.token);
+        localStorage.setItem("token", data.token);
         login(data.token, data.user);
-        navigate("/profile");
-      } else {
-        setMessage(data.message || "Gabim në login");
+
+        if (from) {
+          const isAdminOnly =
+            from.startsWith("/admin") || from.startsWith("/warranty");
+          if (isAdminOnly) {
+            if (data.user.role === "admin")
+              return navigate(from, { replace: true });
+            return navigate("/", { replace: true });
+          }
+          return navigate(from, { replace: true });
+        }
+
+        if (data.user.role === "admin") return navigate("/admin", { replace: true });
+        return navigate("/", { replace: true });
       }
+
+      setMessage({ type: "error", text: data.message || "Gabim në login" });
     } catch {
-      setMessage("Gabim në lidhje me serverin!");
+      setMessage({ type: "error", text: "Gabim në lidhje me serverin!" });
     }
   };
 
+  const loginWithGoogle = () => {
+    window.location.href = `${API_URL}/api/auth/google`;
+  };
+
+  const disabled = !form.email.trim() || !form.password.trim();
+
+  const controlSx = {
+    "& .MuiInputBase-root": {
+      background: "var(--chip)",
+      color: "var(--text)",
+      borderRadius: "14px",
+      border: "1px solid var(--chip-stroke)",
+    },
+    "& .MuiOutlinedInput-notchedOutline": { borderColor: "transparent" },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--chip-stroke)",
+    },
+    "& .MuiInputLabel-root": { color: "var(--muted)" },
+    "& .MuiSvgIcon-root": { color: "var(--muted)" },
+    "& .MuiInputBase-input::placeholder": { color: "#8d8d8d" },
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--accent)",
+      boxShadow: "0 0 0 4px rgba(255,128,0,.12)",
+    },
+  };
+
   return (
-    <Box minHeight="100vh" bgcolor="#f5f7fa" display="flex" alignItems="center" justifyContent="center">
-      <Paper elevation={2} sx={{ p: 4, minWidth: 350, borderRadius: 4 }}>
-        <Typography variant="h4" color="primary" mb={2} fontWeight={700}>
-          <span style={{ color: "#FF7200" }}>topmobile</span>
+    <Box className="auth-page">
+      <Paper elevation={0} className="auth-card">
+        <Typography variant="h4" className="brand" component="div">
+          <span>topmobile</span>
         </Typography>
-        <Typography variant="subtitle1" align="center" mb={3}>
+
+        <Typography
+          variant="subtitle1"
+          align="center"
+          sx={{ color: "var(--muted)", mb: 2 }}
+        >
           Kyçu në llogarinë tënde
         </Typography>
 
-        {/* SOCIAL BUTTONS */}
+        {message.text && (
+          <Alert
+            severity={message.type === "success" ? "success" : "error"}
+            sx={{ mb: 2, borderRadius: 2 }}
+          >
+            {message.text}
+          </Alert>
+        )}
+
         <Button
           fullWidth
           variant="outlined"
-          sx={{ mb: 1, textTransform: "none" }}
-          startIcon={<img src="https://img.icons8.com/color/48/000000/google-logo.png" width="22" alt="google" />}
-          onClick={() =>
-            window.location.href = `${API_URL}/api/auth/google`
+          className="btn-chip"
+          sx={{ mb: 1.2, textTransform: "none" }}
+          startIcon={
+            <img
+              src="https://img.icons8.com/color/48/000000/google-logo.png"
+              width="22"
+              height="22"
+              alt="google"
+              style={{ borderRadius: 2 }}
+            />
           }
+          onClick={loginWithGoogle}
         >
           Identifikohu me Google
         </Button>
-        <Button
-          fullWidth
-          variant="outlined"
-          sx={{ mb: 2, textTransform: "none" }}
-          startIcon={<img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="22" alt="fb" />}
-          disabled
-        >
-          Identifikohu me Facebook
-        </Button>
 
-        <Box component="form" onSubmit={handleSubmit} mt={2}>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
           <TextField
             label="Adresa e emailit"
             name="email"
@@ -77,35 +169,54 @@ function Login() {
             required
             fullWidth
             margin="dense"
+            autoComplete="email"
+            sx={controlSx}
           />
           <TextField
             label="Fjalëkalimi"
             name="password"
-            type="password"
+            type={showPwd ? "text" : "password"}
             value={form.password}
             onChange={handleChange}
             required
             fullWidth
             margin="dense"
+            autoComplete="current-password"
+            sx={controlSx}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPwd((v) => !v)}
+                    edge="end"
+                    aria-label={
+                      showPwd ? "Fshihe fjalëkalimin" : "Shfaq fjalëkalimin"
+                    }
+                    sx={{ color: "var(--muted)" }}
+                  >
+                    {showPwd ? "🙈" : "👁️"}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          {message && (
-            <Typography color="error" fontSize={14} mt={1}>
-              {message}
-            </Typography>
-          )}
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, bgcolor: "#FF7200", "&:hover": { bgcolor: "#e65c00" } }}
+            disabled={disabled}
+            className="btn-accent"
+            sx={{ mt: 2 }}
           >
             Kyçu
           </Button>
         </Box>
+
         <Box mt={2} textAlign="center">
-          <Typography fontSize={14}>
+          <Typography fontSize={14} sx={{ color: "var(--muted)" }}>
             Nuk ke llogari?{" "}
-            <Link to="/register" style={{ color: "#FF7200" }}>
+            <Link to="/register" className="accent-link">
               Regjistrohu
             </Link>
           </Typography>
