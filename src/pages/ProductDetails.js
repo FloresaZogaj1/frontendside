@@ -396,14 +396,24 @@ function RelatedProducts({ currentProduct }) {
   
   // Gjej produktet e ngjashme bazuar në kategori dhe brand
   const relatedProducts = useMemo(() => {
-    if (!currentProduct) return [];
+    if (!currentProduct) {
+      console.log("RelatedProducts: No current product");
+      return [];
+    }
     
-    const allProducts = [];
-    Object.values(ALL_PRODUCTS).forEach(categoryProducts => {
-      if (Array.isArray(categoryProducts)) {
-        allProducts.push(...categoryProducts);
-      }
-    });
+    console.log("RelatedProducts: Current product:", currentProduct.name);
+    
+    // ALL_PRODUCTS është një array, jo object
+    const allProducts = Array.isArray(ALL_PRODUCTS) ? ALL_PRODUCTS : [];
+    
+    if (allProducts.length === 0) {
+      // Fallback nëse ALL_PRODUCTS është object
+      Object.values(ALL_PRODUCTS).forEach(categoryProducts => {
+        if (Array.isArray(categoryProducts)) {
+          allProducts.push(...categoryProducts);
+        }
+      });
+    }
     
     // Filtro produktet e ngjashme
     const related = allProducts.filter(product => {
@@ -428,12 +438,20 @@ function RelatedProducts({ currentProduct }) {
     });
     
     // Limit në 4 produkte dhe shuffle
-    return related
+    const result = related
       .sort(() => 0.5 - Math.random())
       .slice(0, 4);
+      
+    console.log("RelatedProducts: Found", result.length, "related products:", result.map(p => p.name));
+    return result;
   }, [currentProduct]);
   
-  if (relatedProducts.length === 0) return null;
+  if (relatedProducts.length === 0) {
+    console.log("RelatedProducts: No related products found, returning null");
+    return null;
+  }
+  
+  console.log("RelatedProducts: Rendering", relatedProducts.length, "products");
   
   const handleProductClick = (product) => {
     const slug = productSlug(product);
