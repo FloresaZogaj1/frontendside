@@ -27,7 +27,7 @@ export default function AdminKontratat() {
     const load = async () => {
       try {
         setLoading(true); setErr("");
-        const { data } = await api.get("/contracts/softsave"); // base URL tashmë ka /api
+        const { data } = await api.get("/api/contracts/softsave"); // production backend ka /api prefix
         const dataArray = Array.isArray(data) ? data : (data.rows || data.data || []);
         setRows(dataArray);
       } catch (e) {

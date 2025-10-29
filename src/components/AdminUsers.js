@@ -31,7 +31,7 @@ export default function AdminUsers() {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await api.get(`/admin/users`); // Hequr /api prefix
+        const { data } = await api.get(`/api/admin/users`); // production backend ka /api prefix
         if (alive) setUsers(Array.isArray(data) ? data : []);
       } catch (e) {
         if (alive) {

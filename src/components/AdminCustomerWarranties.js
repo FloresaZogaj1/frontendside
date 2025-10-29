@@ -27,7 +27,7 @@ export default function AdminCustomerWarranties() {
 
   const load = async () => {
     try {
-      const { data } = await api.get(`/warranty`); // base URL tashmë ka /api
+      const { data } = await api.get(`/api/warranty`); // production backend ka /api prefix
       setRows(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading warranties:', error);
