@@ -383,6 +383,87 @@ function ProductDetails() {
           )}
         </aside>
       </div>
+
+      {/* Related Products Section */}
+      <RelatedProducts currentProduct={product} />
+    </div>
+  );
+}
+
+// Related Products Component
+function RelatedProducts({ currentProduct }) {
+  const navigate = useNavigate();
+  
+  // Gjej produktet e ngjashme bazuar në kategori dhe brand
+  const relatedProducts = useMemo(() => {
+    if (!currentProduct) return [];
+    
+    const allProducts = [];
+    Object.values(ALL_PRODUCTS).forEach(categoryProducts => {
+      if (Array.isArray(categoryProducts)) {
+        allProducts.push(...categoryProducts);
+      }
+    });
+    
+    // Filtro produktet e ngjashme
+    const related = allProducts.filter(product => {
+      // Mos përfshi produktin aktual
+      if (product.id === currentProduct.id) return false;
+      
+      // Përparësi për të njëjtën kategori
+      if (product.category === currentProduct.category) return true;
+      
+      // Nëse kanë të njëjtin brand
+      if (product.brand && currentProduct.brand && 
+          product.brand.toLowerCase() === currentProduct.brand.toLowerCase()) return true;
+      
+      // Nëse kanë fjalë kyçe të ngjashme në emër
+      const currentWords = currentProduct.name.toLowerCase().split(' ');
+      const productWords = product.name.toLowerCase().split(' ');
+      const commonWords = currentWords.filter(word => 
+        word.length > 3 && productWords.includes(word)
+      );
+      
+      return commonWords.length >= 1;
+    });
+    
+    // Limit në 4 produkte dhe shuffle
+    return related
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4);
+  }, [currentProduct]);
+  
+  if (relatedProducts.length === 0) return null;
+  
+  const handleProductClick = (product) => {
+    const slug = productSlug(product);
+    navigate(`/products/${slug}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  return (
+    <div className="related-products">
+      <h2 className="related-title">Produktet e Ngjashme</h2>
+      <div className="related-grid">
+        {relatedProducts.map((product) => (
+          <div key={product.id} className="related-card" onClick={() => handleProductClick(product)}>
+            <div className="related-image">
+              <img 
+                src={product.image || DEFAULT_IMG} 
+                alt={product.name}
+                loading="lazy"
+              />
+            </div>
+            <div className="related-info">
+              <h3 className="related-name">{product.name}</h3>
+              <div className="related-price">€{product.price}</div>
+              {product.originalPrice && product.originalPrice > product.price && (
+                <div className="related-original-price">€{product.originalPrice}</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,19 @@
 import React from "react";
-import { Badge } from "@mui/material";
+import { 
+  Badge, Box, IconButton, Drawer, List, ListItem, ListItemButton, 
+  ListItemText, ListItemIcon, Divider, Accordion, AccordionSummary, 
+  AccordionDetails, Typography
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { IoCardOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../CartContext";
 import { useAuth } from "../AuthContext";
 import logo from "../assets/PFP-01__5_-removebg-preview.png";
-import "../styles/modern-navbar.css";
+import "./Navbar.css";
 
 const productMenu = [
   { label: "iPhone", path: "/products/iphone", icon: "📱" },
@@ -25,6 +34,8 @@ export default function Navbar() {
   const [showProducts, setShowProducts] = React.useState(false);
   const [showServices, setShowServices] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = React.useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -236,6 +247,7 @@ export default function Navbar() {
           </div>
 
           <nav className="mobile-menu-nav">
+            {/* Ballina */}
             <div className="mobile-nav-item">
               <Link to="/" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,26 +257,85 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {productMenu.map((item) => (
-              <div key={item.label} className="mobile-nav-item">
-                <Link to={item.path} className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
-                  <span>{item.icon}</span>
-                  {item.label}
-                </Link>
-              </div>
-            ))}
+            {/* Produktet me dropdown */}
+            <div className="mobile-nav-item mobile-dropdown">
+              <button 
+                className="mobile-nav-link mobile-dropdown-btn" 
+                onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Produktet
+                <svg 
+                  width="16" 
+                  height="16" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  className={`dropdown-arrow ${mobileProductsOpen ? 'open' : ''}`}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileProductsOpen && (
+                <div className="mobile-submenu">
+                  {productMenu.map((item) => (
+                    <Link 
+                      key={item.label} 
+                      to={item.path} 
+                      className="mobile-submenu-link" 
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className="submenu-icon">{item.icon}</span>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            {servicesMenu.map((item) => (
-              <div key={item.path} className="mobile-nav-item">
-                <Link to={item.path} className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
-                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  </svg>
-                  {item.label}
-                </Link>
-              </div>
-            ))}
+            {/* Shërbimet me dropdown */}
+            <div className="mobile-nav-item mobile-dropdown">
+              <button 
+                className="mobile-nav-link mobile-dropdown-btn" 
+                onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                </svg>
+                Shërbimet
+                <svg 
+                  width="16" 
+                  height="16" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  className={`dropdown-arrow ${mobileServicesOpen ? 'open' : ''}`}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileServicesOpen && (
+                <div className="mobile-submenu">
+                  {servicesMenu.map((item) => (
+                    <Link 
+                      key={item.path} 
+                      to={item.path} 
+                      className="mobile-submenu-link" 
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      </svg>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
+            {/* Gift Cards */}
             <div className="mobile-nav-item">
               <Link to="/gift-cards" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,6 +345,7 @@ export default function Navbar() {
               </Link>
             </div>
 
+            {/* Rreth Nesh */}
             <div className="mobile-nav-item">
               <Link to="/about" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,224 +358,5 @@ export default function Navbar() {
         </div>
       </div>
     </>
-  );
-}
-      <Container maxWidth="lg">
-        <Toolbar disableGutters className="tm-toolbar">
-          {/* LEFT */}
-          <Box className="tm-left">
-            <Link to="/" aria-label="Ballina" className="tm-logo-wrap" title="Top Mobile - Ballina">
-              <img src={logo} alt="Top Mobile" className="tm-logo" />
-            </Link>
-          </Box>
-
-          {/* CENTER */}
-          <Box className="tm-center" component="nav" aria-label="Meny kryesore">
-            <Box className="tm-nav">
-              <Button component={Link} to="/" className="tm-link" title="Ballina">Ballina</Button>
-              <Button component={Link} to="/gift-cards" className="tm-link" title="Gift Cards">Gift Cards</Button>
-
-              {/* Produktet */}
-              <Box className="dropdown-wrap">
-                <Button
-                  className="tm-link products-btn"
-                  aria-haspopup="menu"
-                  aria-expanded={showProducts ? "true" : "false"}
-                  aria-controls="products-menu"
-                  onClick={() => setShowProducts((v) => !v)}
-                  endIcon={<ArrowDropDownIcon />}
-                >
-                  Produktet
-                </Button>
-                {showProducts && (
-                  <Box id="products-menu" role="menu" className="glass-submenu">
-                    {productMenu.map((it) => (
-                      <Link key={it.label} to={it.path} className="menu-glass-link" onClick={() => setShowProducts(false)}>
-                        <div className="menu-glass-item">
-                          <span className="menu-glass-icon" style={{ color: it.color }}>{it.icon}</span>
-                          <span className="menu-glass-label">{it.label}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </Box>
-                )}
-              </Box>
-
-              {/* Shërbimet */}
-              <Box className="dropdown-wrap">
-                <Button
-                  className="tm-link services-btn"
-                  aria-haspopup="menu"
-                  aria-expanded={showServices ? "true" : "false"}
-                  aria-controls="services-menu"
-                  onClick={() => setShowServices((v) => !v)}
-                  endIcon={<ArrowDropDownIcon />}
-                >
-                  Shërbimet
-                </Button>
-                {showServices && (
-                  <Box id="services-menu" role="menu" className="glass-submenu">
-                    {servicesMenu.map((it) => (
-                      <Link key={it.path} to={it.path} className="menu-glass-link" onClick={() => setShowServices(false)}>
-                        <div className="menu-glass-item">
-                          <span className="menu-glass-label">{it.label}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </Box>
-                )}
-              </Box>
-
-              <Button component={Link} to="/about" className="tm-link about-link" title="Rreth Nesh">
-                {"Rreth\u00A0Nesh"}
-              </Button>
-            </Box>
-
-            {/* Search */}
-            <Box className="tm-search-wrap" component="form" role="search" onSubmit={handleSearch}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Kërko produkte…"
-                size="small"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleSearch(e); }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon className="tm-search-icon" onClick={handleSearch} aria-label="Kërko" role="button" />
-                    </InputAdornment>
-                  ),
-                }}
-                className="tm-search"
-              />
-            </Box>
-          </Box>
-
-          {/* RIGHT */}
-          <Box className="tm-right">
-            <Link to="/cart" aria-label="Shporta" title="Shporta">
-              <IconButton className="tm-cart-btn">
-                <Badge badgeContent={cart?.length || 0} color="error" invisible={!cart?.length}>
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-            </Link>
-
-            {!loggedIn ? (
-              <Button component={Link} to="/login" className="tm-login-btn" title="Kyçu">
-                <span className="tm-btn-label">Kyçu</span>
-              </Button>
-            ) : (
-              <Button onClick={onLogout} className="tm-link" title="Dil">Dil</Button>
-            )}
-          </Box>
-
-          {/* HAMBURGER (mobile) */}
-          <Box className="tm-hamburger">
-            <IconButton aria-label="Hap menynë" onClick={() => setMobileOpen(true)} className="tm-menu-btn" title="Meny">
-              <MenuIcon />
-            </IconButton>
-          </Box>
-
-          <Drawer
-            anchor="right"
-            open={mobileOpen}
-            onClose={() => setMobileOpen(false)}
-            ModalProps={{ keepMounted: true }}
-            PaperProps={{ sx: { width: { xs: "86vw", sm: 320 }, bgcolor:"var(--bg-2)", color:"var(--text)", borderTopLeftRadius: 14, borderBottomLeftRadius: 14 } }}
-          >
-            {/* Drawer content */}
-            <Box sx={{ p: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                <Link to="/" onClick={() => setMobileOpen(false)}>
-                  <img src={logo} alt="Top Mobile" style={{ height: 56 }} />
-                </Link>
-                <IconButton onClick={() => setMobileOpen(false)} sx={{ color: "var(--text)" }}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-              <Divider sx={{ borderColor: "#1d1d1d", mb: 1 }} />
-
-              <List component="nav">
-                <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/" onClick={() => setMobileOpen(false)}>
-                    <ListItemIcon><HomeIcon sx={{ color: "var(--accent)" }} /></ListItemIcon>
-                    <ListItemText primary="Ballina" />
-                  </ListItemButton>
-                </ListItem>
-
-                <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/gift-cards" onClick={() => setMobileOpen(false)}>
-                    <ListItemIcon><IoCardOutline style={{ color: "var(--accent)", fontSize: 22 }} /></ListItemIcon>
-                    <ListItemText primary="Gift Cards" />
-                  </ListItemButton>
-                </ListItem>
-
-                <Accordion sx={{ bgcolor: "transparent", color: "var(--text)" }}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "var(--accent)" }} />}>
-                    <Typography sx={{ fontWeight: 800, color: "var(--accent)" }}>Produktet</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {productMenu.map((it) => (
-                      <ListItemButton key={it.label} component={Link} to={it.path} onClick={() => setMobileOpen(false)}>
-                        <ListItemText primary={it.label} />
-                      </ListItemButton>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
-
-                <Accordion sx={{ bgcolor: "transparent", color: "var(--text)" }}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "var(--accent)" }} />}>
-                    <Typography sx={{ fontWeight: 800, color: "var(--accent)" }}>Shërbimet</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {servicesMenu.map((it) => (
-                      <ListItemButton key={it.path} component={Link} to={it.path} onClick={() => setMobileOpen(false)}>
-                        <ListItemText primary={it.label} />
-                      </ListItemButton>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
-
-                <Divider sx={{ my: 1, borderColor: "#1d1d1d" }} />
-
-                <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/about" onClick={() => setMobileOpen(false)}>
-                    <ListItemText primary="Rreth Nesh" />
-                  </ListItemButton>
-                </ListItem>
-
-                <ListItem disablePadding>
-                  <ListItemButton component={Link} to="/cart" onClick={() => setMobileOpen(false)}>
-                    <ListItemIcon>
-                      <Badge badgeContent={cart?.length || 0} color="error" invisible={!cart?.length}>
-                        <ShoppingCartIcon sx={{ color: "var(--accent)" }} />
-                      </Badge>
-                    </ListItemIcon>
-                    <ListItemText primary="Shporta" />
-                  </ListItemButton>
-                </ListItem>
-
-                {!loggedIn ? (
-                  <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/login" onClick={() => setMobileOpen(false)}>
-                      <ListItemText primary="Kyçu" />
-                    </ListItemButton>
-                  </ListItem>
-                ) : (
-                  <ListItem disablePadding>
-                    <ListItemButton onClick={() => { logout(); setMobileOpen(false); }}>
-                      <ListItemText primary="Dil" />
-                    </ListItemButton>
-                  </ListItem>
-                )}
-              </List>
-            </Box>
-          </Drawer>
-        </Toolbar>
-      </Container>
-    </AppBar>
   );
 }
