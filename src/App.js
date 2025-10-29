@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
-import Navbar from "./components/NavbarModern";
+import Navbar from "./components/NavbarSimple";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductsIphone from "./pages/ProductsIphone";

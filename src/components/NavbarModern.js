@@ -1,21 +1,70 @@
-import React from "react";
-import { Badge } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../CartContext";
-import { useAuth } from "../AuthContext";
-import logo from "../assets/PFP-01__5_-removebg-preview.png";
-import "../styles/modern-navbar.css";
+import React from "react";import React from "react";import React from "react";import React from "react";
 
-const productMenu = [
-  { label: "iPhone", path: "/products/iphone", icon: "📱" },
-  { label: "Samsung", path: "/products/samsung", icon: "📱" },
-  { label: "Fujifilm / Instax", path: "/category/fujifilm", icon: "📸" },
-  { label: "Aksesorë", path: "/products/accessories", icon: "🎧" },
-];
+import { Link } from "react-router-dom";
 
-const servicesMenu = [
-  { path: "/sherbimet/mirembajtja", label: "Mirëmbajtja me kontratë" },
-  { path: "/sherbimet/telefona", label: "Pjesë për telefona" },
+import logo from "../assets/PFP-01__5_-removebg-preview.png";import { Link } from "react-router-dom";
+
+
+
+export default function Navbar() {import logo from "../assets/PFP-01__5_-removebg-preview.png";import { Link } from "react-router-dom";import { Badge } from "@mui/material";
+
+  return (
+
+    <nav className="navbar-simple">import "../styles/modern-navbar.css";
+
+      <div className="navbar-container-simple">
+
+        <Link to="/" className="navbar-logo-large">import logo from "../assets/PFP-01__5_-removebg-preview.png";import { Link, useNavigate } from "react-router-dom";
+
+          <img src={logo} alt="Top Mobile" className="logo-image" />
+
+          <span className="brand-name-large">Top Mobile</span>export default function Navbar() {
+
+        </Link>
+
+      </div>  return (import "../styles/modern-navbar.css";import { useCart } from "../CartContext";
+
+    </nav>
+
+  );    <nav className="navbar-simple">
+
+}
+      <div className="navbar-container-simple">import { useAuth } from "../AuthContext";
+
+        {/* Logo dhe Top Mobile - Centruar */}
+
+        <Link to="/" className="navbar-logo-large">export default function Navbar() {import logo from "../assets/PFP-01__5_-removebg-preview.png";
+
+          <img src={logo} alt="Top Mobile" />
+
+          <span className="brand-name-large">Top Mobile</span>  return (import "../styles/modern-navbar.css";
+
+        </Link>
+
+      </div>    <nav className="navbar-simple">
+
+    </nav>
+
+  );      <div className="navbar-container-simple">const productMenu = [
+
+}
+        {/* Logo dhe Top Mobile - Centruar */}  { label: "iPhone", path: "/products/iphone", icon: "📱" },
+
+        <Link to="/" className="navbar-logo-large">  { label: "Samsung", path: "/products/samsung", icon: "📱" },
+
+          <img src={logo} alt="Top Mobile" />  { label: "Fujifilm / Instax", path: "/category/fujifilm", icon: "📸" },
+
+          <span className="brand-name-large">Top Mobile</span>  { label: "Aksesorë", path: "/products/accessories", icon: "🎧" },
+
+        </Link>];
+
+      </div>
+
+    </nav>const servicesMenu = [
+
+  );  { path: "/sherbimet/mirembajtja", label: "Mirëmbajtja me kontratë" },
+
+}  { path: "/sherbimet/telefona", label: "Pjesë për telefona" },
   { path: "/sherbimet/playstation", label: "Pjesë për playStation" },
   { path: "/sherbimet/servisi", label: "Servisi & përkrahja" },
   { path: "/sherbimet/asistenca", label: "Asistencë Mobile" },
@@ -72,23 +121,14 @@ export default function Navbar() {
   return (
     <>
       <nav className={`navbar-modern ${scrolled ? 'scrolled' : ''}`}>
-        <div className="navbar-container">
-          {/* Logo */}
-          <Link to="/" className="navbar-logo">
+        <div className="navbar-container-simple">
+          {/* Logo dhe Top Mobile - Centruar */}
+          <Link to="/" className="navbar-logo-large">
             <img src={logo} alt="Top Mobile" />
-            Top Mobile
+            <span className="brand-name-large">Top Mobile</span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                Ballina
-              </Link>
-            </li>
+        </div>
+      </nav>
 
             <li className="nav-item">
               <div 

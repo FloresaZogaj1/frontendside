@@ -392,6 +392,79 @@
   color: var(--primary);
 }
 
+/* ====== SIMPLE NAVBAR STYLES ====== */
+.navbar-simple {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  transition: all 0.3s ease;
+  padding: var(--space-4) 0;
+}
+
+.navbar-container-simple {
+  max-width: var(--breakpoint-2xl);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-logo-large {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.navbar-logo-large:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  height: 60px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.brand-name-large {
+  font-size: 2.5rem;
+  font-weight: var(--weight-bold);
+  color: #ff6b35;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  .brand-name-large {
+    font-size: 2rem;
+  }
+  
+  .logo-image {
+    height: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-name-large {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+  
+  .logo-image {
+    height: 35px;
+  }
+  
+  .navbar-logo-large {
+    gap: var(--space-2);
+  }
+}
+
 /* Mobile Dropdown Styles */
 .mobile-dropdown-item {
   margin-bottom: var(--space-2);
